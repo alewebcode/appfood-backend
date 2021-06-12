@@ -3,6 +3,11 @@ module.exports = {
   "type":"postgres",
   "url": process.env.DATABASE_URL,
   "ssl": true,
+  "extra": {
+    "ssl": {
+      "rejectUnauthorized": false
+  }
+  },
   // "port":5432,
   // "host":"localhost",
   // "username":"postgres",
