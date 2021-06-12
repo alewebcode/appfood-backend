@@ -1,10 +1,12 @@
 import express,{ json } from 'express'
 import cors from 'cors';
 import path from 'path';
+import dotenv from "dotenv";
 
 import routes from './routes'
 import './database'
 
+dotenv.config();
 
 const app = express()
 
