@@ -7,10 +7,10 @@ module.exports = {
   // "password":"123456",
   // "database":"cuponsfood",
   "migrations":[
-    "dist/src/database/migrations/*.ts"//"./src/database/migrations/*.ts"
+    "dist/database/migrations/*.ts"//"./src/database/migrations/*.ts"
   ],
   "entities":[
-    "dist/src/models/*.ts" //"./src/models/*.ts"
+    "dist/models/*.ts" //"./src/models/*.ts"
   ],
   "cli":{
     "migrationsDir":"./src/database/migrations"
