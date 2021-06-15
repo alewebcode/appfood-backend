@@ -112,8 +112,8 @@ export default {
     const company = await companyRepository.findOneOrFail(id,{
       relations:['segment']
     });
-    //console.log(company.logo)
-    company.logo = `http://192.168.0.103:3333/uploads/${company.logo}`
+    //company.logo = `http://192.168.0.103:3333/uploads/${company.logo}`
+    company.logo = `https://appfood-backend.herokuapp.com/uploads/${company.logo}`
 
 
     return response.json(company);

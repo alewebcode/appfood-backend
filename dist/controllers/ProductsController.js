@@ -118,7 +118,8 @@ exports.default = {
                     case 1:
                         product = _a.sent();
                         //console.log(product.logo)
-                        product.image = "http://192.168.0.103:3333/uploads/" + product.image;
+                        //product.image = `http://192.168.0.103:3333/uploads/${product.image}`
+                        product.image = "https://appfood-backend.herokuapp.com/uploads/" + product.image;
                         console.log(product);
                         return [2 /*return*/, response.json(product)];
                 }
