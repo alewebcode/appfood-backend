@@ -54,7 +54,7 @@ export default {
     
     } = request.body
     
-    const format_price = price.toFixed(2)
+    const format_price = price
     .replace(',', '.')
     .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
   
@@ -112,7 +112,8 @@ export default {
       name,
       description,
       price,
-      category
+      category,
+      company
     
     } = request.body
 
@@ -121,10 +122,14 @@ export default {
    
     const file = requestImage?requestImage.filename:product.image
 
+    const format_price = price
+    .replace(',', '.')
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+
     const  data = {
       name,
       description,
-      price,
+      price:format_price,
       category,
       image:file
     }

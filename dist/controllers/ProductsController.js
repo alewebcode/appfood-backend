@@ -84,7 +84,7 @@ exports.default = {
                 switch (_b.label) {
                     case 0:
                         _a = request.body, name = _a.name, description = _a.description, price = _a.price, category = _a.category, company = _a.company;
-                        format_price = price.toFixed(2)
+                        format_price = price
                             .replace(',', '.')
                             .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
                         productRepository = typeorm_1.getRepository(Product_1.Product);
@@ -133,7 +133,7 @@ exports.default = {
     },
     update: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var id, productRepository, product, _a, name, description, price, category, requestImage, file, data;
+            var id, productRepository, product, _a, name, description, price, category, company, requestImage, file, format_price, data;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -142,13 +142,16 @@ exports.default = {
                         return [4 /*yield*/, productRepository.findOneOrFail(id)];
                     case 1:
                         product = _b.sent();
-                        _a = request.body, name = _a.name, description = _a.description, price = _a.price, category = _a.category;
+                        _a = request.body, name = _a.name, description = _a.description, price = _a.price, category = _a.category, company = _a.company;
                         requestImage = request.file;
                         file = requestImage ? requestImage.filename : product.image;
+                        format_price = price
+                            .replace(',', '.')
+                            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
                         data = {
                             name: name,
                             description: description,
-                            price: price,
+                            price: format_price,
                             category: category,
                             image: file
                         };
