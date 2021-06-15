@@ -84,6 +84,9 @@ exports.default = {
                 switch (_b.label) {
                     case 0:
                         _a = request.body, name = _a.name, description = _a.description, price = _a.price, category = _a.category, company = _a.company;
+                        price.toFixed(2)
+                            .replace(',', '.')
+                            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
                         productRepository = typeorm_1.getRepository(Product_1.Product);
                         requestImage = request.file;
                         file = requestImage ? requestImage.filename : '';
@@ -120,7 +123,9 @@ exports.default = {
                         //console.log(product.logo)
                         //product.image = `http://192.168.0.103:3333/uploads/${product.image}`
                         product.image = "https://appfood-backend.herokuapp.com/uploads/" + product.image;
-                        console.log(product);
+                        product.price
+                            .replace('.', ',')
+                            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
                         return [2 /*return*/, response.json(product)];
                 }
             });
