@@ -79,12 +79,12 @@ exports.default = {
     },
     create: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, name, description, price, category, company, productRepository, requestImage, file, data, product;
+            var _a, name, description, price, category, company, format_price, productRepository, requestImage, file, data, product;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         _a = request.body, name = _a.name, description = _a.description, price = _a.price, category = _a.category, company = _a.company;
-                        price.toFixed(2)
+                        format_price = price.toFixed(2)
                             .replace(',', '.')
                             .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
                         productRepository = typeorm_1.getRepository(Product_1.Product);
@@ -93,7 +93,7 @@ exports.default = {
                         data = {
                             name: name,
                             description: description,
-                            price: price,
+                            price: format_price,
                             category: category,
                             company: company,
                             image: file
@@ -123,7 +123,7 @@ exports.default = {
                         //console.log(product.logo)
                         //product.image = `http://192.168.0.103:3333/uploads/${product.image}`
                         product.image = "https://appfood-backend.herokuapp.com/uploads/" + product.image;
-                        product.price
+                        product.price = product.price
                             .replace('.', ',')
                             .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
                         return [2 /*return*/, response.json(product)];

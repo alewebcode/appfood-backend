@@ -54,7 +54,7 @@ export default {
     
     } = request.body
     
-    price.toFixed(2)
+    const format_price = price.toFixed(2)
     .replace(',', '.')
     .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
   
@@ -68,7 +68,7 @@ export default {
     const data = {
       name,
       description,
-      price,
+      price:format_price,
       category,
       company,
       image:file
@@ -93,7 +93,7 @@ export default {
     //product.image = `http://192.168.0.103:3333/uploads/${product.image}`
     product.image = `https://appfood-backend.herokuapp.com/uploads/${product.image}`
 
-    product.price
+    product.price = product.price
     .replace('.', ',')
     .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
 
