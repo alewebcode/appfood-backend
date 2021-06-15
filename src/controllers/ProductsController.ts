@@ -54,6 +54,9 @@ export default {
     
     } = request.body
     
+    price.toFixed(2)
+    .replace(',', '.')
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
   
     const productRepository = getRepository(Product)
 
@@ -90,7 +93,10 @@ export default {
     //product.image = `http://192.168.0.103:3333/uploads/${product.image}`
     product.image = `https://appfood-backend.herokuapp.com/uploads/${product.image}`
 
-    console.log(product)
+    product.price
+    .replace('.', ',')
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+
 
     return response.json(product);
   },
