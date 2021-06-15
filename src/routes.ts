@@ -26,7 +26,7 @@ routes.post('/categories',CategoriesController.create)
 routes.get('/categories',CategoriesController.index)
 routes.put('/categories/:id',CategoriesController.update)
 routes.get('/categories/:id',CategoriesController.show)
-routes.get('/categories/:id',SegmentController.show)
+routes.delete('/categories/:id',SegmentController.delete)
 
 routes.post('/products',upload.single('image'),ProductsController.create)
 routes.get('/products',ProductsController.index)

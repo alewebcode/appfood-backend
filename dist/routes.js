@@ -26,7 +26,7 @@ routes.post('/categories', CategoriesController_1.default.create);
 routes.get('/categories', CategoriesController_1.default.index);
 routes.put('/categories/:id', CategoriesController_1.default.update);
 routes.get('/categories/:id', CategoriesController_1.default.show);
-routes.get('/categories/:id', SegmentController_1.default.show);
+routes.delete('/categories/:id', SegmentController_1.default.delete);
 routes.post('/products', upload.single('image'), ProductsController_1.default.create);
 routes.get('/products', ProductsController_1.default.index);
 routes.get('/products/:id', ProductsController_1.default.show);
