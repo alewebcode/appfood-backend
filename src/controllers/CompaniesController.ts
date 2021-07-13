@@ -1,7 +1,9 @@
 import { Request, Response, request } from 'express';
 import { getRepository } from 'typeorm';
+import companyView from '../views/companies_view';
 
 import { Company } from '../models/Company';
+import { Product } from '../models/Product';
 
 export default {
 
@@ -43,7 +45,7 @@ export default {
         return response.status(201).json(companies)
       }
 
-      return response.status(201).json(companies)
+      //return response.status(201).json(companies)
     },
 
     async create(request:Request,response:Response){
@@ -112,8 +114,8 @@ export default {
     const company = await companyRepository.findOneOrFail(id,{
       relations:['segment']
     });
-    //company.logo = `http://192.168.0.103:3333/uploads/${company.logo}`
-    company.logo = `https://appfood-backend.herokuapp.com/uploads/${company.logo}`
+    company.logo = `http://192.168.0.100:3333/uploads/${company.logo}`
+    //company.logo = `https://appfood-backend.herokuapp.com/uploads/${company.logo}`
 
 
     return response.json(company);
@@ -194,6 +196,65 @@ export default {
 
     return response.status(201).send();
 
-  }
+  },
 
-}
+  async filterCities(request:Request,response:Response){
+    const companiesRepository = getRepository(Company)
+    
+    //const companies = await companiesRepository.find() 
+    
+    const cities = await companiesRepository.createQueryBuilder()
+    .select('DISTINCT ("city")')
+    .getRawMany()
+    
+    return response.json(cities);
+  },
+  async searchCompanies(request:Request,response:Response){
+    const companiesRepository = getRepository(Company)
+    
+    if(request.query.filterCompany){
+      
+      const filter = request.query.filterCompany?request.query.filterCompany:'';
+
+      const companies = await companiesRepository.createQueryBuilder()
+      .innerJoinAndSelect("Segment.id","segment_id")
+      .where("LOWER(name) LIKE :name",{ name:`%${filter}%` })
+      .getMany();
+
+
+      return response.json(companies);
+    }
+    else{
+     
+      const filter = request.query.filterCity?request.query.filterCity:'';
+
+
+      const companies = await companiesRepository.createQueryBuilder()
+      .innerJoinAndSelect("Company.segment","segment_id")
+      .where("city LIKE :city",{ city:`%${filter}%` })
+      .getMany();
+
+      return response.json(companies);
+    }
+    
+  },
+
+  async listProducts(request:Request,response:Response){
+    const { id } = request.params;
+
+    // const companyRepository = getRepository(Company);
+
+    // const company = await companyRepository.findOneOrFail(id);
+
+    const productsRepository = getRepository(Product)
+
+    const products = await productsRepository.find({
+      where:{company:id}
+    })
+
+    return response.status(201).json(products)
+
+  }
+  
+  
+} 

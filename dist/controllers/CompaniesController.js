@@ -38,6 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
 var Company_1 = require("../models/Company");
+var Product_1 = require("../models/Product");
 exports.default = {
     index: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
@@ -76,7 +77,6 @@ exports.default = {
                     case 5:
                         companies_2 = _b.sent();
                         return [2 /*return*/, response.status(201).json(companies_2)];
-                    case 6: return [2 /*return*/, response.status(201).json(companies)];
                 }
             });
         });
@@ -133,8 +133,8 @@ exports.default = {
                             })];
                     case 1:
                         company = _a.sent();
-                        //company.logo = `http://192.168.0.103:3333/uploads/${company.logo}`
-                        company.logo = "https://appfood-backend.herokuapp.com/uploads/" + company.logo;
+                        company.logo = "http://192.168.0.100:3333/uploads/" + company.logo;
+                        //company.logo = `https://appfood-backend.herokuapp.com/uploads/${company.logo}`
                         return [2 /*return*/, response.json(company)];
                 }
             });
@@ -197,6 +197,70 @@ exports.default = {
                     case 2:
                         _a.sent();
                         return [2 /*return*/, response.status(201).send()];
+                }
+            });
+        });
+    },
+    filterCities: function (request, response) {
+        return __awaiter(this, void 0, void 0, function () {
+            var companiesRepository, cities;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        companiesRepository = typeorm_1.getRepository(Company_1.Company);
+                        return [4 /*yield*/, companiesRepository.createQueryBuilder()
+                                .select('DISTINCT ("city")')
+                                .getRawMany()];
+                    case 1:
+                        cities = _a.sent();
+                        return [2 /*return*/, response.json(cities)];
+                }
+            });
+        });
+    },
+    searchCompanies: function (request, response) {
+        return __awaiter(this, void 0, void 0, function () {
+            var companiesRepository, filter, companies, filter, companies;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        companiesRepository = typeorm_1.getRepository(Company_1.Company);
+                        if (!request.query.filterCompany) return [3 /*break*/, 2];
+                        filter = request.query.filterCompany ? request.query.filterCompany : '';
+                        return [4 /*yield*/, companiesRepository.createQueryBuilder()
+                                .innerJoinAndSelect("Segment.id", "segment_id")
+                                .where("LOWER(name) LIKE :name", { name: "%" + filter + "%" })
+                                .getMany()];
+                    case 1:
+                        companies = _a.sent();
+                        return [2 /*return*/, response.json(companies)];
+                    case 2:
+                        filter = request.query.filterCity ? request.query.filterCity : '';
+                        return [4 /*yield*/, companiesRepository.createQueryBuilder()
+                                .innerJoinAndSelect("Company.segment", "segment_id")
+                                .where("city LIKE :city", { city: "%" + filter + "%" })
+                                .getMany()];
+                    case 3:
+                        companies = _a.sent();
+                        return [2 /*return*/, response.json(companies)];
+                }
+            });
+        });
+    },
+    listProducts: function (request, response) {
+        return __awaiter(this, void 0, void 0, function () {
+            var id, productsRepository, products;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        id = request.params.id;
+                        productsRepository = typeorm_1.getRepository(Product_1.Product);
+                        return [4 /*yield*/, productsRepository.find({
+                                where: { company: id }
+                            })];
+                    case 1:
+                        products = _a.sent();
+                        return [2 /*return*/, response.status(201).json(products)];
                 }
             });
         });
