@@ -1,18 +1,16 @@
 import { Entity,Column, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
+
 import { User } from "./User";
 
-@Entity('salesmans')
+@Entity('customers')
 
-class Salesman {
+class Customer {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
   @Column()
   name: string;
-
-  @Column({ type: 'date' })
-  birthdate: string;
 
   @Column()
   cpf: number;
@@ -45,15 +43,28 @@ class Salesman {
   @Column()
   state: string;
 
+  
   @Column()
   referral_code: string;
+
+  @Column()
+  user_referral: string;
+
+  @Column()
+  commission: number;
+
+  @Column({ type: 'date' })
+  birthdate: string;
 
   @OneToOne(type => User)
   @JoinColumn({ name: 'user_id'})
   user:User
 
+  @Column()
+  total_cashback: number;
+
  
 
 }
 
-export { Salesman }
+export { Customer }

@@ -1,6 +1,7 @@
 import { Request, Response, request } from 'express';
 import bcrypt from 'bcrypt';
 import { getRepository } from 'typeorm';
+import * as crypto from "crypto";
 
 
 import { Salesman } from '../models/Salesman';
@@ -87,6 +88,10 @@ export default {
 
     let format_birthdate = new Date(birthdate).toISOString().replace(/T/, ' ').replace(/\..+/, '')
 
+    
+    const referral_code = crypto.randomBytes(6).toString('hex');
+
+
     const  data = {
       name,
       birthdate:format_birthdate,
@@ -100,7 +105,8 @@ export default {
       neighborhood,
       city,
       state,
-      user:user.id
+      user:user.id,
+      referral_code
     }as any
 
     const salesman = salesmanRepository.create(data)

@@ -1,6 +1,8 @@
-import { Entity,Column, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Entity,Column, JoinColumn, OneToOne, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 
 import { Segment } from "./Segment";
+import { City } from "./City";
+import { Product } from "./Product";
 
 @Entity('companies')
 
@@ -39,12 +41,6 @@ class Company {
   neighborhood: string;
 
   @Column()
-  city: string;
-
-  @Column()
-  state: string;
-
-  @Column()
   phone: number;
 
   @Column()
@@ -59,13 +55,29 @@ class Company {
   @Column()
   company_indication: string;
 
+  @Column()
+  referral_code: string;
+
+  @Column()
+  user_referral: string;
+
+  @Column()
+  commission: number;
+
   @OneToOne(type => Segment)
   @JoinColumn({ name: 'segment_id'})
-  segment:Segment
+  segment:Segment;
 
+  @OneToOne(type => City)
+  @JoinColumn({ name: 'city_id'})
+  city:City;
 
-
+  @OneToMany(type => Product, product => product.company)
+  products: Product[];
   
+  @Column()
+  total_cashback: number;
+ 
 
 }
 

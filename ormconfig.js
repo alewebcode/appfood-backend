@@ -1,7 +1,7 @@
 module.exports = {
   "type":"postgres",
   "url": process.env.DATABASE_URL,
-  "ssl": true,
+  /*"ssl": true,
   "extra": {
     "ssl": {
       "rejectUnauthorized": false
@@ -12,13 +12,14 @@ module.exports = {
   "username":"postgres",
   "password":"123456",
   "database":"cuponsfood",
+  */
   "migrations":[
-    "dist/database/migrations/*.js"
-    //"./src/database/migrations/*.ts"
+    //"dist/database/migrations/*.js"
+    "./src/database/migrations/*.ts"
   ],
   "entities":[
-    "dist/models/*.js" 
-    //"./src/models/*.ts"
+    //"dist/models/*.js" 
+    "./src/models/*.ts"
   ],
   "cli":{
     "migrationsDir":"./src/database/migrations"

@@ -1,31 +1,44 @@
 import { Request, Response, request } from 'express';
 import { getRepository } from 'typeorm';
+import { Company } from '../models/Company';
 
 import { Product } from '../models/Product';
 
 export default {
 
     async index(request:Request,response:Response){
-
       const productsRepository = getRepository(Product)
+      const { referral_code } = request.query
 
-      if(request.query){
+      const companyRepository = getRepository(Company)
+      const company = await companyRepository.findOne({
+        where:{referral_code:referral_code}
+      })
+
+      if(request.query.filter){
+        
+        const company_id = company.id
         
         const { page, limit} = request.query as any
 
         const offset = (page - 1) * limit;
+
         
-        const totalResults = await productsRepository.count()
+        const totalResults = await productsRepository.count({ where: { company:company_id }});//await productsRepository.count()
 
-        //console.log(totalResults)
+       
         const filter = request.query.filter?request.query.filter:'';
-
+       
       
         const products = await productsRepository.createQueryBuilder()
         .where("LOWER(name) LIKE :name",{ name:`%${filter}%` })
+        .andWhere("company_id =:company_id",{company_id})
         .offset(offset)
         .limit(limit)
         .getMany()
+
+       
+
 
         const result = {
           totalResults,
@@ -34,12 +47,24 @@ export default {
 
         return response.status(201).json(result)
       }else{
-       
+      
+        
         const productsRepository = getRepository(Product)
-
-        const products = await productsRepository.find() 
+        const products = await productsRepository.find({
+         
+          where:{
+            company:company.id
+          }
+        })
+        
+        const totalResults = products.length//await productsRepository.count({ where: { company:company.id }});
+        
+        const result = {
+          totalResults,
+          products
+        }
   
-        return response.status(201).json(products)
+        return response.status(201).json(result)
       }
     },
 
@@ -50,9 +75,18 @@ export default {
       description,
       price,
       category,
-      company
+      user
     
     } = request.body
+
+    const companyRepository = getRepository(Company)
+
+    const company = await companyRepository.findOneOrFail({
+      where:{
+        'referral_code':user
+      }
+    });
+
     
     const format_price = price
     .replace(',', '.')
@@ -70,9 +104,9 @@ export default {
       description,
       price:format_price,
       category,
-      company,
+      company:company.id,
       image:file
-    }
+    }as any
 
     const product = productRepository.create(data)
 
@@ -86,12 +120,15 @@ export default {
 
     const productRepository = getRepository(Product);
 
-    const product = await productRepository.findOneOrFail(id,{
-      relations:['category']
+    const product = await productRepository.findOneOrFail({
+      relations:['company','category'],
+      where:{
+        'id':id
+      }
     });
-    //console.log(product.logo)
-    //product.image = `http://192.168.0.103:3333/uploads/${product.image}`
-    product.image = `https://appfood-backend.herokuapp.com/uploads/${product.image}`
+    
+    product.image = `http://192.168.0.103:3333/uploads/${product.image}`
+    //product.image = `https://appfood-backend.herokuapp.com/uploads/${product.image}`
 
     product.price = product.price
     .replace('.', ',')

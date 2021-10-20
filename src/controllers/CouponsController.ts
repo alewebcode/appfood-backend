@@ -6,6 +6,7 @@ import pt from 'date-fns/locale/pt';
 
 
 import { Coupon } from '../models/Coupon';
+import { Company } from '../models/Company';
 
 export default {
 
@@ -13,8 +14,9 @@ export default {
       const couponRepository = getRepository(Coupon)
 
       const coupons = await couponRepository.find() 
+      const { referral_code } = request.query
 
-      if(request.query){
+      if(request.query.filter){
         
         const { page, limit} = request.query as any
 
@@ -45,12 +47,33 @@ export default {
        
         const couponRepository = getRepository(Coupon)
 
-        const coupons = await couponRepository.find() 
+        const coupon = await couponRepository.find() 
+
+        const companyRepository = getRepository(Company)
+        const company = await companyRepository.findOne({
+          where:{referral_code:referral_code}
+        })
+        const company_id = company.id
+
+        const coupons = await couponRepository.createQueryBuilder()
+        .innerJoinAndSelect("Coupon.product","product_id")
+        .where(`company_id = ${company_id}`)
+        .getMany();
+
+        const totalResults = coupons.length
+
+        const result = {
+          totalResults,
+          coupons
+        }
+        
+        
+        //console.log(coupons)
   
-        return response.status(201).json(coupons)
+        return response.status(201).json(result)
       }
 
-        return response.status(201).json(coupons)
+        //return response.status(201).json(coupons)
     },
 
     async create(request:Request,response:Response){
@@ -149,6 +172,20 @@ export default {
 
     return response.status(201).send();
 
-  }
+  },
+  async listCoupons(request:Request,response:Response){
+    const { id } = request.params;
 
+    const couponRepository = getRepository(Coupon);
+    
+    const coupons = await couponRepository.createQueryBuilder()
+      .innerJoinAndSelect("Coupon.product","product_id")
+      .where(`company_id = ${id}`)
+      .andWhere("Coupon.active = true")
+      .getMany();
+
+  
+
+    return response.json(coupons);
+  },
 }

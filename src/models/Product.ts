@@ -1,7 +1,8 @@
-import { Entity,Column, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Entity,Column, JoinColumn, OneToOne, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
 
 import { Company } from "./Company";
 import { Category } from "./Category";
+import { Coupon } from "./Coupon";
 
 @Entity('products')
 
@@ -21,13 +22,19 @@ class Product {
   @Column()
   price: string;
 
-  @OneToOne(type => Company)
+  // @OneToOne(type => Company)
+  // @JoinColumn({ name: 'company_id'})
+  // company:Company
+  @ManyToOne(type => Company, company => company.products)
   @JoinColumn({ name: 'company_id'})
-  company:Company
+  company: Company;
 
   @OneToOne(type => Category)
   @JoinColumn({ name: 'category_id'})
   category:Category
+
+  // @OneToOne(type => Coupon, coupon => coupon.product)
+  // coupon: Coupon;
 
 }
 

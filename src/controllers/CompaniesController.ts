@@ -1,18 +1,27 @@
 import { Request, Response, request } from 'express';
 import { getRepository } from 'typeorm';
 import companyView from '../views/companies_view';
+import * as crypto from "crypto";
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 import { Company } from '../models/Company';
 import { Product } from '../models/Product';
+import { City } from '../models/City';
+import { Coupon } from '../models/Coupon';
+import { User } from '../models/User';
 
 export default {
 
     async index(request:Request,response:Response){
+      
       const companiesRepository = getRepository(Company)
 
       const companies = await companiesRepository.find() 
-
-      if(request.query){
+      const { user_referral } = request.query
+      
+     
+      if(request.query.filter){
         
         const { page, limit} = request.query as any
 
@@ -20,12 +29,11 @@ export default {
         
         const totalResults = await companiesRepository.count()
 
-        //console.log(totalResults)
         const filter = request.query.filter?request.query.filter:'';
 
-      
         const companies = await companiesRepository.createQueryBuilder()
         .where("LOWER(name) LIKE :name",{ name:`%${filter}%` })
+        .andWhere("user_referral =:user_referral",{user_referral})
         .offset(offset)
         .limit(limit)
         .getMany()
@@ -37,18 +45,30 @@ export default {
 
         return response.status(201).json(result)
       }else{
-       
+        
         const companiesRepository = getRepository(Company)
+        const companies = await companiesRepository.find({
+          where:{user_referral:user_referral}
+        })
 
-        const companies = await companiesRepository.find() 
-  
-        return response.status(201).json(companies)
+        const totalResults = await companiesRepository.count()
+
+        const result = {
+          totalResults,
+          companies
+        }
+        
+        return response.status(201).json(result)
       }
 
-      //return response.status(201).json(companies)
+        //return response.status(201).json(companies)
     },
 
     async create(request:Request,response:Response){
+
+      const usertoken = request.header('Authorization');
+      const token = usertoken.split(' ');
+      const decoded = jwt.verify(token[1], 'secret');
      
       const {
       name,
@@ -70,13 +90,36 @@ export default {
       segment
     
     } = request.body
+
+    const userRepository = getRepository(User)
+
+    const password = crypto.randomBytes(4).toString('hex');
+    const password_hash = await bcrypt.hash(password,8);
+
     
+    const findUser = await userRepository.findOne(decoded.id);
+
+    const referral_code = crypto.randomBytes(3).toString('hex');
+
+    const userData = {
+      name,
+      email,
+      password:password_hash,
+      user_type:4,
+      referral_code//findUser.referral_code
+    } as any
+
+    const newUser = userRepository.create(userData);//CRIAÇÃO DE NOVO USUÁRIO A PARTIR DO CADASTRO DO VENDEDOR
+    
+    const user = await userRepository.save(newUser);
   
     const companyRepository = getRepository(Company)
 
     const requestLogo = request.file as Express.Multer.File;
    
-    const file = requestLogo?requestLogo.filename:''
+    const file = requestLogo?requestLogo.filename:'';
+
+    //const referral_code = crypto.randomBytes(3).toString('hex');
 
     const  data = {
       name,
@@ -88,7 +131,7 @@ export default {
       number,
       complement,
       neighborhood,
-      city,
+      city:1,
       state,
       phone,
       email,
@@ -96,8 +139,10 @@ export default {
       pickup_in_place,
       company_indication:'',
       segment,
-      logo:file
-    }
+      logo:file,
+      referral_code,
+      user_referral:findUser.referral_code
+    }as any
 
     const company = companyRepository.create(data)
 
@@ -212,29 +257,65 @@ export default {
   async searchCompanies(request:Request,response:Response){
     const companiesRepository = getRepository(Company)
     
-    if(request.query.filterCompany){
+    if(request.query.filterProductCompany){
       
-      const filter = request.query.filterCompany?request.query.filterCompany:'';
+      const filter = request.query.filterProductCompany?request.query.filterProductCompany:'';
 
-      const companies = await companiesRepository.createQueryBuilder()
-      .innerJoinAndSelect("Segment.id","segment_id")
-      .where("LOWER(name) LIKE :name",{ name:`%${filter}%` })
-      .getMany();
+      const companies = await companiesRepository
+      .createQueryBuilder("companies")
+      .select(["product.id",
+              "product.name",
+              "product.image",
+              "product.description",
+              "product.price",
+              "companies.name",
+              "coupons.id as coupon_id",
+              "coupons.coupon_code as coupon_code",
+              "coupons.amount as coupon_amount"])
+      .innerJoin("companies.segment","segment_id")
+      .innerJoin("companies.products","product")
+      .innerJoin(Coupon,"coupons","Product.id = coupons.product_id")
+      .where("LOWER(product.name) || LOWER(companies.name) LIKE :name",{ name:`%${filter}%` })
+      .andWhere('companies.id <> :id', { id: 1})
+      //.andWhere("coupons.active = true")
+      .getRawMany();
 
-
+     
       return response.json(companies);
     }
     else{
-     
-      const filter = request.query.filterCity?request.query.filterCity:'';
+      
+      const slug = request.query.slug?request.query.slug:'';
 
+      const cityRepository = getRepository(City)
 
-      const companies = await companiesRepository.createQueryBuilder()
-      .innerJoinAndSelect("Company.segment","segment_id")
-      .where("city LIKE :city",{ city:`%${filter}%` })
-      .getMany();
+      const city = await cityRepository.findOne({
+        where:{slug:slug}
+      })
 
+      const companies = await companiesRepository
+      .createQueryBuilder("companies")
+      .select(["product.id",
+              "product.name",
+              "product.image",
+              "product.description",
+              "product.price",
+              "companies.name",
+              "coupons.id as coupon_id",
+              "coupons.coupon_code as coupon_code",
+              "coupons.amount as coupon_amount"])
+      .innerJoin("companies.segment","segment_id")
+      .innerJoin("companies.products","product")
+      .innerJoin(Coupon,"coupons","Product.id = coupons.product_id")
+      .where('companies.city = :city', { city: city.id })
+      .andWhere('companies.id <> :id', { id: 1})
+      //.andWhere("coupons.active = true")
+      .getRawMany();
+
+      
       return response.json(companies);
+      
+     
     }
     
   },
@@ -242,9 +323,6 @@ export default {
   async listProducts(request:Request,response:Response){
     const { id } = request.params;
 
-    // const companyRepository = getRepository(Company);
-
-    // const company = await companyRepository.findOneOrFail(id);
 
     const productsRepository = getRepository(Product)
 
