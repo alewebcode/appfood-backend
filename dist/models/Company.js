@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Company = void 0;
 var typeorm_1 = require("typeorm");
 var Segment_1 = require("./Segment");
+var City_1 = require("./City");
+var Product_1 = require("./Product");
 var Company = /** @class */ (function () {
     function Company() {
     }
@@ -61,14 +63,6 @@ var Company = /** @class */ (function () {
     ], Company.prototype, "neighborhood", void 0);
     __decorate([
         typeorm_1.Column(),
-        __metadata("design:type", String)
-    ], Company.prototype, "city", void 0);
-    __decorate([
-        typeorm_1.Column(),
-        __metadata("design:type", String)
-    ], Company.prototype, "state", void 0);
-    __decorate([
-        typeorm_1.Column(),
         __metadata("design:type", Number)
     ], Company.prototype, "phone", void 0);
     __decorate([
@@ -88,10 +82,35 @@ var Company = /** @class */ (function () {
         __metadata("design:type", String)
     ], Company.prototype, "company_indication", void 0);
     __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", String)
+    ], Company.prototype, "referral_code", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", String)
+    ], Company.prototype, "user_referral", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", Number)
+    ], Company.prototype, "commission", void 0);
+    __decorate([
         typeorm_1.OneToOne(function (type) { return Segment_1.Segment; }),
         typeorm_1.JoinColumn({ name: 'segment_id' }),
         __metadata("design:type", Segment_1.Segment)
     ], Company.prototype, "segment", void 0);
+    __decorate([
+        typeorm_1.OneToOne(function (type) { return City_1.City; }),
+        typeorm_1.JoinColumn({ name: 'city_id' }),
+        __metadata("design:type", City_1.City)
+    ], Company.prototype, "city", void 0);
+    __decorate([
+        typeorm_1.OneToMany(function (type) { return Product_1.Product; }, function (product) { return product.company; }),
+        __metadata("design:type", Array)
+    ], Company.prototype, "products", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", Number)
+    ], Company.prototype, "total_cashback", void 0);
     Company = __decorate([
         typeorm_1.Entity('companies')
     ], Company);

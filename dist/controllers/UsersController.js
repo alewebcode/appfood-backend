@@ -41,64 +41,80 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
 var bcrypt_1 = __importDefault(require("bcrypt"));
+var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var User_1 = require("../models/User");
+var Mail_1 = __importDefault(require("../lib/Mail"));
 exports.default = {
     index: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var usersRepository, _a, page, limit, offset, totalResults, filter, users, result, usersRepository_1, users;
+            var usersRepository, referral_code, _a, page, limit, offset, filter, users, totalResults, result, usersRepository_1, users, totalResults, result;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         usersRepository = typeorm_1.getRepository(User_1.User);
-                        if (!request.query) return [3 /*break*/, 3];
+                        referral_code = request.query.referral_code;
+                        if (!request.query.filter) return [3 /*break*/, 2];
                         _a = request.query, page = _a.page, limit = _a.limit;
                         offset = (page - 1) * limit;
-                        return [4 /*yield*/, usersRepository.count()
-                            //console.log(totalResults)
-                        ];
-                    case 1:
-                        totalResults = _b.sent();
                         filter = request.query.filter ? request.query.filter : '';
+                        console.log(filter);
                         return [4 /*yield*/, usersRepository.createQueryBuilder()
                                 .innerJoinAndSelect("User.user_type", "id_user_type")
                                 .where("LOWER(User.name) LIKE :name", { name: "%" + filter + "%" })
+                                .andWhere("referral_code = :referral_code OR user_referral = :referral_code", {
+                                referral_code: referral_code,
+                                user_referral: referral_code
+                            })
                                 .offset(offset)
                                 .limit(limit)
                                 .getMany()];
-                    case 2:
+                    case 1:
                         users = _b.sent();
+                        totalResults = users.length;
                         result = {
                             totalResults: totalResults,
                             users: users
                         };
                         return [2 /*return*/, response.status(201).json(result)];
-                    case 3:
+                    case 2:
                         usersRepository_1 = typeorm_1.getRepository(User_1.User);
-                        return [4 /*yield*/, usersRepository_1.findOneOrFail({
+                        return [4 /*yield*/, usersRepository_1.find({
+                                where: [
+                                    { referral_code: referral_code },
+                                    { user_referral: referral_code }
+                                ],
                                 relations: ['user_type']
                             })];
-                    case 4:
+                    case 3:
                         users = _b.sent();
-                        return [2 /*return*/, response.status(201).json(users)];
+                        totalResults = users.length;
+                        result = {
+                            totalResults: totalResults,
+                            users: users
+                        };
+                        return [2 /*return*/, response.status(201).json(result)];
                 }
             });
         });
     },
     create: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, name, email, password, password_hash, userRepository, data, user;
+            var _a, name, email, password, userRepository, userExists, data, user;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         _a = request.body, name = _a.name, email = _a.email, password = _a.password;
-                        return [4 /*yield*/, bcrypt_1.default.hash(password, 8)];
-                    case 1:
-                        password_hash = _b.sent();
                         userRepository = typeorm_1.getRepository(User_1.User);
+                        return [4 /*yield*/, userRepository.findOne({ email: email })];
+                    case 1:
+                        userExists = _b.sent();
+                        if (userExists) {
+                            return [2 /*return*/, response.status(400).json({ error: 'User already exists' })];
+                        }
                         data = {
                             name: name,
                             email: email,
-                            password: password_hash,
+                            password: password,
                             user_type: 1
                         };
                         user = userRepository.create(data);
@@ -206,4 +222,82 @@ exports.default = {
             });
         });
     },
+    authenticate: function (request, response) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, email, password, userRepository, user, isValidPassword, token, err_1;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 3, , 4]);
+                        _a = request.body, email = _a.email, password = _a.password;
+                        userRepository = typeorm_1.getRepository(User_1.User);
+                        return [4 /*yield*/, userRepository.findOne({ email: email }, { relations: ['user_type'] })];
+                    case 1:
+                        user = _b.sent();
+                        if (!user) {
+                            return [2 /*return*/, response.status(401).json({ error: "User not found" })];
+                        }
+                        return [4 /*yield*/, bcrypt_1.default.compare(password, user.password)];
+                    case 2:
+                        isValidPassword = _b.sent();
+                        if (!isValidPassword) {
+                            return [2 /*return*/, response.status(401).json({ error: "Password is invalid" })];
+                        }
+                        token = jsonwebtoken_1.default.sign({ id: user.id, user_type: user.user_type }, 'secret', { expiresIn: '1d' });
+                        // if(user.user_type.id == 2){
+                        //     const salesmanRepository = getRepository(Salesman);
+                        //     const salesman = await salesmanRepository.find({
+                        //       where:{user:user.id}
+                        //     })
+                        //     user.referral_code = salesman[0].referral_code
+                        // }else if(user.user_type.id == 3){
+                        //   const customerRepository = getRepository(Customer);
+                        //   const customer = await customerRepository.find({
+                        //     where:{user:user.id}
+                        //   })
+                        //   user.referral_code = customer[0].referral_code
+                        // }else{
+                        //user.referral_code = user.user_referral
+                        //}
+                        delete user.password;
+                        return [2 /*return*/, response.json({
+                                user: user,
+                                token: token
+                            })];
+                    case 3:
+                        err_1 = _b.sent();
+                        return [2 /*return*/, response.status(401).json({ error: "User authentication failed" })];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    },
+    sendMailIndication: function (request, response) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, email, referralLink, err_2;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = request.body, email = _a.email, referralLink = _a.referralLink;
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, Mail_1.default.sendMail({
+                                from: 'teste <teste@teste.com.br>',
+                                to: "< " + email + " >",
+                                subject: 'Indicação',
+                                template: 'indication',
+                                context: { referralLink: referralLink }
+                            })];
+                    case 2:
+                        _b.sent();
+                        return [2 /*return*/, response.status(201).json(true)];
+                    case 3:
+                        err_2 = _b.sent();
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    }
 };

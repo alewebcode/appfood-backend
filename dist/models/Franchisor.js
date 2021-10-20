@@ -9,49 +9,42 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Product = void 0;
+exports.Franchisor = void 0;
 var typeorm_1 = require("typeorm");
-var Company_1 = require("./Company");
-var Category_1 = require("./Category");
-var Product = /** @class */ (function () {
-    function Product() {
+var Franchisor = /** @class */ (function () {
+    function Franchisor() {
     }
     __decorate([
         typeorm_1.PrimaryGeneratedColumn('increment'),
         __metadata("design:type", Number)
-    ], Product.prototype, "id", void 0);
+    ], Franchisor.prototype, "id", void 0);
     __decorate([
         typeorm_1.Column(),
         __metadata("design:type", String)
-    ], Product.prototype, "name", void 0);
+    ], Franchisor.prototype, "name", void 0);
     __decorate([
         typeorm_1.Column(),
         __metadata("design:type", String)
-    ], Product.prototype, "image", void 0);
+    ], Franchisor.prototype, "email", void 0);
     __decorate([
         typeorm_1.Column(),
         __metadata("design:type", String)
-    ], Product.prototype, "description", void 0);
+    ], Franchisor.prototype, "referral_code", void 0);
     __decorate([
         typeorm_1.Column(),
-        __metadata("design:type", String)
-    ], Product.prototype, "price", void 0);
+        __metadata("design:type", Number)
+    ], Franchisor.prototype, "commission", void 0);
     __decorate([
-        typeorm_1.ManyToOne(function (type) { return Company_1.Company; }, function (company) { return company.products; }),
-        typeorm_1.JoinColumn({ name: 'company_id' }),
-        __metadata("design:type", Company_1.Company)
-    ], Product.prototype, "company", void 0);
+        typeorm_1.Column(),
+        __metadata("design:type", Number)
+    ], Franchisor.prototype, "total_cashback", void 0);
     __decorate([
-        typeorm_1.OneToOne(function (type) { return Category_1.Category; }),
-        typeorm_1.JoinColumn({ name: 'category_id' }),
-        __metadata("design:type", Category_1.Category
-        // @OneToOne(type => Coupon, coupon => coupon.product)
-        // coupon: Coupon;
-        )
-    ], Product.prototype, "category", void 0);
-    Product = __decorate([
-        typeorm_1.Entity('products')
-    ], Product);
-    return Product;
+        typeorm_1.Column(),
+        __metadata("design:type", Number)
+    ], Franchisor.prototype, "total_amount", void 0);
+    Franchisor = __decorate([
+        typeorm_1.Entity('franchisor')
+    ], Franchisor);
+    return Franchisor;
 }());
-exports.Product = Product;
+exports.Franchisor = Franchisor;

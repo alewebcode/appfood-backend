@@ -9,76 +9,88 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Salesman = void 0;
+exports.Customer = void 0;
 var typeorm_1 = require("typeorm");
 var User_1 = require("./User");
-var Salesman = /** @class */ (function () {
-    function Salesman() {
+var Customer = /** @class */ (function () {
+    function Customer() {
     }
     __decorate([
         typeorm_1.PrimaryGeneratedColumn('increment'),
         __metadata("design:type", Number)
-    ], Salesman.prototype, "id", void 0);
+    ], Customer.prototype, "id", void 0);
     __decorate([
         typeorm_1.Column(),
         __metadata("design:type", String)
-    ], Salesman.prototype, "name", void 0);
+    ], Customer.prototype, "name", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", Number)
+    ], Customer.prototype, "cpf", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", Number)
+    ], Customer.prototype, "phone", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", String)
+    ], Customer.prototype, "email", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", Number)
+    ], Customer.prototype, "zip_code", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", String)
+    ], Customer.prototype, "street", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", Number)
+    ], Customer.prototype, "number", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", String)
+    ], Customer.prototype, "complement", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", String)
+    ], Customer.prototype, "neighborhood", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", String)
+    ], Customer.prototype, "city", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", String)
+    ], Customer.prototype, "state", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", String)
+    ], Customer.prototype, "referral_code", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", String)
+    ], Customer.prototype, "user_referral", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", Number)
+    ], Customer.prototype, "commission", void 0);
     __decorate([
         typeorm_1.Column({ type: 'date' }),
         __metadata("design:type", String)
-    ], Salesman.prototype, "birthdate", void 0);
-    __decorate([
-        typeorm_1.Column(),
-        __metadata("design:type", Number)
-    ], Salesman.prototype, "cpf", void 0);
-    __decorate([
-        typeorm_1.Column(),
-        __metadata("design:type", Number)
-    ], Salesman.prototype, "phone", void 0);
-    __decorate([
-        typeorm_1.Column(),
-        __metadata("design:type", String)
-    ], Salesman.prototype, "email", void 0);
-    __decorate([
-        typeorm_1.Column(),
-        __metadata("design:type", Number)
-    ], Salesman.prototype, "zip_code", void 0);
-    __decorate([
-        typeorm_1.Column(),
-        __metadata("design:type", String)
-    ], Salesman.prototype, "street", void 0);
-    __decorate([
-        typeorm_1.Column(),
-        __metadata("design:type", Number)
-    ], Salesman.prototype, "number", void 0);
-    __decorate([
-        typeorm_1.Column(),
-        __metadata("design:type", String)
-    ], Salesman.prototype, "complement", void 0);
-    __decorate([
-        typeorm_1.Column(),
-        __metadata("design:type", String)
-    ], Salesman.prototype, "neighborhood", void 0);
-    __decorate([
-        typeorm_1.Column(),
-        __metadata("design:type", String)
-    ], Salesman.prototype, "city", void 0);
-    __decorate([
-        typeorm_1.Column(),
-        __metadata("design:type", String)
-    ], Salesman.prototype, "state", void 0);
-    __decorate([
-        typeorm_1.Column(),
-        __metadata("design:type", String)
-    ], Salesman.prototype, "referral_code", void 0);
+    ], Customer.prototype, "birthdate", void 0);
     __decorate([
         typeorm_1.OneToOne(function (type) { return User_1.User; }),
         typeorm_1.JoinColumn({ name: 'user_id' }),
         __metadata("design:type", User_1.User)
-    ], Salesman.prototype, "user", void 0);
-    Salesman = __decorate([
-        typeorm_1.Entity('salesmans')
-    ], Salesman);
-    return Salesman;
+    ], Customer.prototype, "user", void 0);
+    __decorate([
+        typeorm_1.Column(),
+        __metadata("design:type", Number)
+    ], Customer.prototype, "total_cashback", void 0);
+    Customer = __decorate([
+        typeorm_1.Entity('customers')
+    ], Customer);
+    return Customer;
 }());
-exports.Salesman = Salesman;
+exports.Customer = Customer;

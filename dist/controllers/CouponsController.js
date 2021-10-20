@@ -39,10 +39,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
 var date_fns_1 = require("date-fns");
 var Coupon_1 = require("../models/Coupon");
+var Company_1 = require("../models/Company");
 exports.default = {
     index: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var couponRepository, coupons, _a, page, limit, offset, totalResults, filter, coupons_1, result, couponRepository_1, coupons_2;
+            var couponRepository, coupons, referral_code, _a, page, limit, offset, totalResults, filter, coupons_1, result, couponRepository_1, coupon, companyRepository, company, company_id, coupons_2, totalResults, result;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -50,7 +51,8 @@ exports.default = {
                         return [4 /*yield*/, couponRepository.find()];
                     case 1:
                         coupons = _b.sent();
-                        if (!request.query) return [3 /*break*/, 4];
+                        referral_code = request.query.referral_code;
+                        if (!request.query.filter) return [3 /*break*/, 4];
                         _a = request.query, page = _a.page, limit = _a.limit;
                         offset = (page - 1) * limit;
                         return [4 /*yield*/, couponRepository.count()];
@@ -74,9 +76,27 @@ exports.default = {
                         couponRepository_1 = typeorm_1.getRepository(Coupon_1.Coupon);
                         return [4 /*yield*/, couponRepository_1.find()];
                     case 5:
+                        coupon = _b.sent();
+                        companyRepository = typeorm_1.getRepository(Company_1.Company);
+                        return [4 /*yield*/, companyRepository.findOne({
+                                where: { referral_code: referral_code }
+                            })];
+                    case 6:
+                        company = _b.sent();
+                        company_id = company.id;
+                        return [4 /*yield*/, couponRepository_1.createQueryBuilder()
+                                .innerJoinAndSelect("Coupon.product", "product_id")
+                                .where("company_id = " + company_id)
+                                .getMany()];
+                    case 7:
                         coupons_2 = _b.sent();
-                        return [2 /*return*/, response.status(201).json(coupons_2)];
-                    case 6: return [2 /*return*/, response.status(201).json(coupons)];
+                        totalResults = coupons_2.length;
+                        result = {
+                            totalResults: totalResults,
+                            coupons: coupons_2
+                        };
+                        //console.log(coupons)
+                        return [2 /*return*/, response.status(201).json(result)];
                 }
             });
         });
@@ -177,5 +197,25 @@ exports.default = {
                 }
             });
         });
-    }
+    },
+    listCoupons: function (request, response) {
+        return __awaiter(this, void 0, void 0, function () {
+            var id, couponRepository, coupons;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        id = request.params.id;
+                        couponRepository = typeorm_1.getRepository(Coupon_1.Coupon);
+                        return [4 /*yield*/, couponRepository.createQueryBuilder()
+                                .innerJoinAndSelect("Coupon.product", "product_id")
+                                .where("company_id = " + id)
+                                .andWhere("Coupon.active = true")
+                                .getMany()];
+                    case 1:
+                        coupons = _a.sent();
+                        return [2 /*return*/, response.json(coupons)];
+                }
+            });
+        });
+    },
 };

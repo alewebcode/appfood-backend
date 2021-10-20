@@ -37,53 +37,79 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
+var Company_1 = require("../models/Company");
 var Product_1 = require("../models/Product");
 exports.default = {
     index: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var productsRepository, _a, page, limit, offset, totalResults, filter, products, result, productsRepository_1, products;
+            var productsRepository, referral_code, companyRepository, company, company_id, _a, page, limit, offset, totalResults, filter, products, result, productsRepository_1, products, totalResults, result;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         productsRepository = typeorm_1.getRepository(Product_1.Product);
-                        if (!request.query) return [3 /*break*/, 3];
+                        referral_code = request.query.referral_code;
+                        companyRepository = typeorm_1.getRepository(Company_1.Company);
+                        return [4 /*yield*/, companyRepository.findOne({
+                                where: { referral_code: referral_code }
+                            })];
+                    case 1:
+                        company = _b.sent();
+                        if (!request.query.filter) return [3 /*break*/, 4];
+                        company_id = company.id;
                         _a = request.query, page = _a.page, limit = _a.limit;
                         offset = (page - 1) * limit;
-                        return [4 /*yield*/, productsRepository.count()
-                            //console.log(totalResults)
-                        ];
-                    case 1:
+                        return [4 /*yield*/, productsRepository.count({ where: { company: company_id } })];
+                    case 2:
                         totalResults = _b.sent();
                         filter = request.query.filter ? request.query.filter : '';
                         return [4 /*yield*/, productsRepository.createQueryBuilder()
                                 .where("LOWER(name) LIKE :name", { name: "%" + filter + "%" })
+                                .andWhere("company_id =:company_id", { company_id: company_id })
                                 .offset(offset)
                                 .limit(limit)
                                 .getMany()];
-                    case 2:
+                    case 3:
                         products = _b.sent();
                         result = {
                             totalResults: totalResults,
                             products: products
                         };
                         return [2 /*return*/, response.status(201).json(result)];
-                    case 3:
-                        productsRepository_1 = typeorm_1.getRepository(Product_1.Product);
-                        return [4 /*yield*/, productsRepository_1.find()];
                     case 4:
+                        productsRepository_1 = typeorm_1.getRepository(Product_1.Product);
+                        return [4 /*yield*/, productsRepository_1.find({
+                                where: {
+                                    company: company.id
+                                }
+                            })];
+                    case 5:
                         products = _b.sent();
-                        return [2 /*return*/, response.status(201).json(products)];
+                        totalResults = products.length //await productsRepository.count({ where: { company:company.id }});
+                        ;
+                        result = {
+                            totalResults: totalResults,
+                            products: products
+                        };
+                        return [2 /*return*/, response.status(201).json(result)];
                 }
             });
         });
     },
     create: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, name, description, price, category, company, format_price, productRepository, requestImage, file, data, product;
+            var _a, name, description, price, category, user, companyRepository, company, format_price, productRepository, requestImage, file, data, product;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = request.body, name = _a.name, description = _a.description, price = _a.price, category = _a.category, company = _a.company;
+                        _a = request.body, name = _a.name, description = _a.description, price = _a.price, category = _a.category, user = _a.user;
+                        companyRepository = typeorm_1.getRepository(Company_1.Company);
+                        return [4 /*yield*/, companyRepository.findOneOrFail({
+                                where: {
+                                    'referral_code': user
+                                }
+                            })];
+                    case 1:
+                        company = _b.sent();
                         format_price = price
                             .replace(',', '.')
                             .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
@@ -95,12 +121,12 @@ exports.default = {
                             description: description,
                             price: format_price,
                             category: category,
-                            company: company,
+                            company: company.id,
                             image: file
                         };
                         product = productRepository.create(data);
                         return [4 /*yield*/, productRepository.save(product)];
-                    case 1:
+                    case 2:
                         _b.sent();
                         return [2 /*return*/, response.status(201).send()];
                 }
@@ -115,14 +141,16 @@ exports.default = {
                     case 0:
                         id = request.params.id;
                         productRepository = typeorm_1.getRepository(Product_1.Product);
-                        return [4 /*yield*/, productRepository.findOneOrFail(id, {
-                                relations: ['category']
+                        return [4 /*yield*/, productRepository.findOneOrFail({
+                                relations: ['company', 'category'],
+                                where: {
+                                    'id': id
+                                }
                             })];
                     case 1:
                         product = _a.sent();
-                        //console.log(product.logo)
-                        //product.image = `http://192.168.0.103:3333/uploads/${product.image}`
-                        product.image = "https://appfood-backend.herokuapp.com/uploads/" + product.image;
+                        product.image = "http://192.168.0.103:3333/uploads/" + product.image;
+                        //product.image = `https://appfood-backend.herokuapp.com/uploads/${product.image}`
                         product.price = product.price
                             .replace('.', ',')
                             .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');

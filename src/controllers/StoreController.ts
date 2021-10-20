@@ -1,6 +1,5 @@
 import { Request, Response, request } from 'express';
 import { getRepository } from 'typeorm';
-import companyView from '../views/companies_view';
 import * as crypto from "crypto";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';

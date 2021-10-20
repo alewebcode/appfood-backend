@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,14 +54,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
+var crypto = __importStar(require("crypto"));
+var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+var bcrypt_1 = __importDefault(require("bcrypt"));
 var Company_1 = require("../models/Company");
 var Product_1 = require("../models/Product");
+var City_1 = require("../models/City");
+var Coupon_1 = require("../models/Coupon");
+var User_1 = require("../models/User");
 exports.default = {
     index: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var companiesRepository, companies, _a, page, limit, offset, totalResults, filter, companies_1, result, companiesRepository_1, companies_2;
+            var companiesRepository, companies, user_referral, _a, page, limit, offset, totalResults, filter, companies_1, result, companiesRepository_1, companies_2, totalResults, result;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -50,17 +78,17 @@ exports.default = {
                         return [4 /*yield*/, companiesRepository.find()];
                     case 1:
                         companies = _b.sent();
-                        if (!request.query) return [3 /*break*/, 4];
+                        user_referral = request.query.user_referral;
+                        if (!request.query.filter) return [3 /*break*/, 4];
                         _a = request.query, page = _a.page, limit = _a.limit;
                         offset = (page - 1) * limit;
-                        return [4 /*yield*/, companiesRepository.count()
-                            //console.log(totalResults)
-                        ];
+                        return [4 /*yield*/, companiesRepository.count()];
                     case 2:
                         totalResults = _b.sent();
                         filter = request.query.filter ? request.query.filter : '';
                         return [4 /*yield*/, companiesRepository.createQueryBuilder()
                                 .where("LOWER(name) LIKE :name", { name: "%" + filter + "%" })
+                                .andWhere("user_referral =:user_referral", { user_referral: user_referral })
                                 .offset(offset)
                                 .limit(limit)
                                 .getMany()];
@@ -73,21 +101,53 @@ exports.default = {
                         return [2 /*return*/, response.status(201).json(result)];
                     case 4:
                         companiesRepository_1 = typeorm_1.getRepository(Company_1.Company);
-                        return [4 /*yield*/, companiesRepository_1.find()];
+                        return [4 /*yield*/, companiesRepository_1.find({
+                                where: { user_referral: user_referral }
+                            })];
                     case 5:
                         companies_2 = _b.sent();
-                        return [2 /*return*/, response.status(201).json(companies_2)];
+                        return [4 /*yield*/, companiesRepository_1.count()];
+                    case 6:
+                        totalResults = _b.sent();
+                        result = {
+                            totalResults: totalResults,
+                            companies: companies_2
+                        };
+                        return [2 /*return*/, response.status(201).json(result)];
                 }
             });
         });
     },
     create: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, name, trading_name, cnpj, state_registration, zip_code, street, number, complement, neighborhood, city, state, phone, email, delivery, pickup_in_place, company_indication, segment, companyRepository, requestLogo, file, data, company;
+            var usertoken, token, decoded, _a, name, trading_name, cnpj, state_registration, zip_code, street, number, complement, neighborhood, city, state, phone, email, delivery, pickup_in_place, company_indication, segment, userRepository, password, password_hash, findUser, referral_code, userData, newUser, user, companyRepository, requestLogo, file, data, company;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
+                        usertoken = request.header('Authorization');
+                        token = usertoken.split(' ');
+                        decoded = jsonwebtoken_1.default.verify(token[1], 'secret');
                         _a = request.body, name = _a.name, trading_name = _a.trading_name, cnpj = _a.cnpj, state_registration = _a.state_registration, zip_code = _a.zip_code, street = _a.street, number = _a.number, complement = _a.complement, neighborhood = _a.neighborhood, city = _a.city, state = _a.state, phone = _a.phone, email = _a.email, delivery = _a.delivery, pickup_in_place = _a.pickup_in_place, company_indication = _a.company_indication, segment = _a.segment;
+                        userRepository = typeorm_1.getRepository(User_1.User);
+                        password = crypto.randomBytes(4).toString('hex');
+                        return [4 /*yield*/, bcrypt_1.default.hash(password, 8)];
+                    case 1:
+                        password_hash = _b.sent();
+                        return [4 /*yield*/, userRepository.findOne(decoded.id)];
+                    case 2:
+                        findUser = _b.sent();
+                        referral_code = crypto.randomBytes(3).toString('hex');
+                        userData = {
+                            name: name,
+                            email: email,
+                            password: password_hash,
+                            user_type: 4,
+                            referral_code: referral_code //findUser.referral_code
+                        };
+                        newUser = userRepository.create(userData);
+                        return [4 /*yield*/, userRepository.save(newUser)];
+                    case 3:
+                        user = _b.sent();
                         companyRepository = typeorm_1.getRepository(Company_1.Company);
                         requestLogo = request.file;
                         file = requestLogo ? requestLogo.filename : '';
@@ -101,7 +161,7 @@ exports.default = {
                             number: number,
                             complement: complement,
                             neighborhood: neighborhood,
-                            city: city,
+                            city: 1,
                             state: state,
                             phone: phone,
                             email: email,
@@ -109,11 +169,13 @@ exports.default = {
                             pickup_in_place: pickup_in_place,
                             company_indication: '',
                             segment: segment,
-                            logo: file
+                            logo: file,
+                            referral_code: referral_code,
+                            user_referral: findUser.referral_code
                         };
                         company = companyRepository.create(data);
                         return [4 /*yield*/, companyRepository.save(company)];
-                    case 1:
+                    case 4:
                         _b.sent();
                         return [2 /*return*/, response.status(201).send()];
                 }
@@ -220,27 +282,61 @@ exports.default = {
     },
     searchCompanies: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var companiesRepository, filter, companies, filter, companies;
+            var companiesRepository, filter, companies, slug, cityRepository, city, companies;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         companiesRepository = typeorm_1.getRepository(Company_1.Company);
-                        if (!request.query.filterCompany) return [3 /*break*/, 2];
-                        filter = request.query.filterCompany ? request.query.filterCompany : '';
-                        return [4 /*yield*/, companiesRepository.createQueryBuilder()
-                                .innerJoinAndSelect("Segment.id", "segment_id")
-                                .where("LOWER(name) LIKE :name", { name: "%" + filter + "%" })
-                                .getMany()];
+                        if (!request.query.filterProductCompany) return [3 /*break*/, 2];
+                        filter = request.query.filterProductCompany ? request.query.filterProductCompany : '';
+                        return [4 /*yield*/, companiesRepository
+                                .createQueryBuilder("companies")
+                                .select(["product.id",
+                                "product.name",
+                                "product.image",
+                                "product.description",
+                                "product.price",
+                                "companies.name",
+                                "coupons.id as coupon_id",
+                                "coupons.coupon_code as coupon_code",
+                                "coupons.amount as coupon_amount"])
+                                .innerJoin("companies.segment", "segment_id")
+                                .innerJoin("companies.products", "product")
+                                .innerJoin(Coupon_1.Coupon, "coupons", "Product.id = coupons.product_id")
+                                .where("LOWER(product.name) || LOWER(companies.name) LIKE :name", { name: "%" + filter + "%" })
+                                .andWhere('companies.id <> :id', { id: 1 })
+                                //.andWhere("coupons.active = true")
+                                .getRawMany()];
                     case 1:
                         companies = _a.sent();
                         return [2 /*return*/, response.json(companies)];
                     case 2:
-                        filter = request.query.filterCity ? request.query.filterCity : '';
-                        return [4 /*yield*/, companiesRepository.createQueryBuilder()
-                                .innerJoinAndSelect("Company.segment", "segment_id")
-                                .where("city LIKE :city", { city: "%" + filter + "%" })
-                                .getMany()];
+                        slug = request.query.slug ? request.query.slug : '';
+                        cityRepository = typeorm_1.getRepository(City_1.City);
+                        return [4 /*yield*/, cityRepository.findOne({
+                                where: { slug: slug }
+                            })];
                     case 3:
+                        city = _a.sent();
+                        return [4 /*yield*/, companiesRepository
+                                .createQueryBuilder("companies")
+                                .select(["product.id",
+                                "product.name",
+                                "product.image",
+                                "product.description",
+                                "product.price",
+                                "companies.name",
+                                "coupons.id as coupon_id",
+                                "coupons.coupon_code as coupon_code",
+                                "coupons.amount as coupon_amount"])
+                                .innerJoin("companies.segment", "segment_id")
+                                .innerJoin("companies.products", "product")
+                                .innerJoin(Coupon_1.Coupon, "coupons", "Product.id = coupons.product_id")
+                                .where('companies.city = :city', { city: city.id })
+                                .andWhere('companies.id <> :id', { id: 1 })
+                                //.andWhere("coupons.active = true")
+                                .getRawMany()];
+                    case 4:
                         companies = _a.sent();
                         return [2 /*return*/, response.json(companies)];
                 }
