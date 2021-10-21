@@ -33,9 +33,9 @@ class User {
   @JoinColumn({ name: 'id_user_type'})
   user_type:UserType
 
-  @OneToOne(type => Company)
-  @JoinColumn({ name: 'company_id'})
-  company:Company
+  // @OneToOne(type => Company)
+  // @JoinColumn({ name: 'company_id'})
+  // company:Company
 
   @BeforeInsert()
   @BeforeUpdate()
