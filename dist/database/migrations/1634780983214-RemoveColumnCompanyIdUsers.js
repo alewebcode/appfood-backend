@@ -36,15 +36,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AddColumnCodeIndicationCompanies1630028389953 = void 0;
-var AddColumnCodeIndicationCompanies1630028389953 = /** @class */ (function () {
-    function AddColumnCodeIndicationCompanies1630028389953() {
+exports.RemoveColumnCompanyIdUsers1634780983214 = void 0;
+var RemoveColumnCompanyIdUsers1634780983214 = /** @class */ (function () {
+    function RemoveColumnCompanyIdUsers1634780983214() {
     }
-    AddColumnCodeIndicationCompanies1630028389953.prototype.up = function (queryRunner) {
+    RemoveColumnCompanyIdUsers1634780983214.prototype.up = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE \"companies\" ADD COLUMN code_indication varchar NULL")];
+                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE \"users\" DROP COLUMN company_id")];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -52,11 +52,11 @@ var AddColumnCodeIndicationCompanies1630028389953 = /** @class */ (function () {
             });
         });
     };
-    AddColumnCodeIndicationCompanies1630028389953.prototype.down = function (queryRunner) {
+    RemoveColumnCompanyIdUsers1634780983214.prototype.down = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE \"companies\" DROP COLUMN code_indication")];
+                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE \"users\" ADD COLUMN company_id INTEGER,ADD FOREIGN KEY (\"company_id\") REFERENCES companies (\"id\") ON DELETE CASCADE ON UPDATE CASCADE")];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -64,6 +64,6 @@ var AddColumnCodeIndicationCompanies1630028389953 = /** @class */ (function () {
             });
         });
     };
-    return AddColumnCodeIndicationCompanies1630028389953;
+    return RemoveColumnCompanyIdUsers1634780983214;
 }());
-exports.AddColumnCodeIndicationCompanies1630028389953 = AddColumnCodeIndicationCompanies1630028389953;
+exports.RemoveColumnCompanyIdUsers1634780983214 = RemoveColumnCompanyIdUsers1634780983214;

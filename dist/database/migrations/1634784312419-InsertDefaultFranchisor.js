@@ -36,15 +36,30 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AddColumnCodeIndicationCompanies1630028389953 = void 0;
-var AddColumnCodeIndicationCompanies1630028389953 = /** @class */ (function () {
-    function AddColumnCodeIndicationCompanies1630028389953() {
+exports.InsertDefaultFranchisor1634784312419 = void 0;
+var InsertDefaultFranchisor1634784312419 = /** @class */ (function () {
+    function InsertDefaultFranchisor1634784312419() {
     }
-    AddColumnCodeIndicationCompanies1630028389953.prototype.up = function (queryRunner) {
+    InsertDefaultFranchisor1634784312419.prototype.up = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE \"companies\" ADD COLUMN code_indication varchar NULL")];
+                    case 0: return [4 /*yield*/, queryRunner
+                            .manager
+                            .createQueryBuilder()
+                            .insert()
+                            .into('franchisor')
+                            .values([
+                            {
+                                name: 'Administradora',
+                                email: 'teste@teste.com',
+                                referral_code: '1tLoUj',
+                                commission: 0,
+                                total_cashback: 0,
+                                total_amount: 0,
+                            }
+                        ])
+                            .execute()];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -52,18 +67,13 @@ var AddColumnCodeIndicationCompanies1630028389953 = /** @class */ (function () {
             });
         });
     };
-    AddColumnCodeIndicationCompanies1630028389953.prototype.down = function (queryRunner) {
+    InsertDefaultFranchisor1634784312419.prototype.down = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE \"companies\" DROP COLUMN code_indication")];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                return [2 /*return*/];
             });
         });
     };
-    return AddColumnCodeIndicationCompanies1630028389953;
+    return InsertDefaultFranchisor1634784312419;
 }());
-exports.AddColumnCodeIndicationCompanies1630028389953 = AddColumnCodeIndicationCompanies1630028389953;
+exports.InsertDefaultFranchisor1634784312419 = InsertDefaultFranchisor1634784312419;

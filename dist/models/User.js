@@ -16,10 +16,12 @@ exports.User = void 0;
 var typeorm_1 = require("typeorm");
 var UserType_1 = require("./UserType");
 var bcrypt_1 = __importDefault(require("bcrypt"));
-var Company_1 = require("./Company");
 var User = /** @class */ (function () {
     function User() {
     }
+    // @OneToOne(type => Company)
+    // @JoinColumn({ name: 'company_id'})
+    // company:Company
     User.prototype.hashPassword = function () {
         this.password = bcrypt_1.default.hashSync(this.password, 8);
     };
@@ -54,13 +56,12 @@ var User = /** @class */ (function () {
     __decorate([
         typeorm_1.OneToOne(function (type) { return UserType_1.UserType; }),
         typeorm_1.JoinColumn({ name: 'id_user_type' }),
-        __metadata("design:type", UserType_1.UserType)
+        __metadata("design:type", UserType_1.UserType
+        // @OneToOne(type => Company)
+        // @JoinColumn({ name: 'company_id'})
+        // company:Company
+        )
     ], User.prototype, "user_type", void 0);
-    __decorate([
-        typeorm_1.OneToOne(function (type) { return Company_1.Company; }),
-        typeorm_1.JoinColumn({ name: 'company_id' }),
-        __metadata("design:type", Company_1.Company)
-    ], User.prototype, "company", void 0);
     __decorate([
         typeorm_1.BeforeInsert(),
         typeorm_1.BeforeUpdate(),

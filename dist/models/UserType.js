@@ -15,7 +15,7 @@ var UserType = /** @class */ (function () {
     function UserType() {
     }
     __decorate([
-        typeorm_1.PrimaryGeneratedColumn('increment'),
+        typeorm_1.PrimaryColumn(),
         __metadata("design:type", Number)
     ], UserType.prototype, "id", void 0);
     __decorate([

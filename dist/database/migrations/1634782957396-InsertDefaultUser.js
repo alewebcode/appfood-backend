@@ -36,15 +36,31 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AddColumnCodeIndicationCompanies1630028389953 = void 0;
-var AddColumnCodeIndicationCompanies1630028389953 = /** @class */ (function () {
-    function AddColumnCodeIndicationCompanies1630028389953() {
+exports.InsertDefaultUser1634782957396 = void 0;
+var InsertDefaultUser1634782957396 = /** @class */ (function () {
+    function InsertDefaultUser1634782957396() {
     }
-    AddColumnCodeIndicationCompanies1630028389953.prototype.up = function (queryRunner) {
+    InsertDefaultUser1634782957396.prototype.up = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE \"companies\" ADD COLUMN code_indication varchar NULL")];
+                    case 0: return [4 /*yield*/, queryRunner
+                            .manager
+                            .createQueryBuilder()
+                            .insert()
+                            .into('users')
+                            .values([
+                            {
+                                name: 'Leo',
+                                email: 'teste@teste.com',
+                                password: '$2a$08$8kXjV/WnSTWDWSTuxag/XufbPkvTLeiECVgX.Ge94nPS53MdEPocS',
+                                user_type: 1,
+                                created_at: 'now()',
+                                active: true,
+                                referral_code: '1tLoUj'
+                            },
+                        ])
+                            .execute()];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -52,18 +68,13 @@ var AddColumnCodeIndicationCompanies1630028389953 = /** @class */ (function () {
             });
         });
     };
-    AddColumnCodeIndicationCompanies1630028389953.prototype.down = function (queryRunner) {
+    InsertDefaultUser1634782957396.prototype.down = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE \"companies\" DROP COLUMN code_indication")];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                return [2 /*return*/];
             });
         });
     };
-    return AddColumnCodeIndicationCompanies1630028389953;
+    return InsertDefaultUser1634782957396;
 }());
-exports.AddColumnCodeIndicationCompanies1630028389953 = AddColumnCodeIndicationCompanies1630028389953;
+exports.InsertDefaultUser1634782957396 = InsertDefaultUser1634782957396;

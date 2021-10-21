@@ -36,15 +36,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AddColumnCodeIndicationCompanies1630028389953 = void 0;
-var AddColumnCodeIndicationCompanies1630028389953 = /** @class */ (function () {
-    function AddColumnCodeIndicationCompanies1630028389953() {
+exports.RemoveAutoIncrementUserstype1634778103372 = void 0;
+var RemoveAutoIncrementUserstype1634778103372 = /** @class */ (function () {
+    function RemoveAutoIncrementUserstype1634778103372() {
     }
-    AddColumnCodeIndicationCompanies1630028389953.prototype.up = function (queryRunner) {
+    RemoveAutoIncrementUserstype1634778103372.prototype.up = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE \"companies\" ADD COLUMN code_indication varchar NULL")];
+                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE users_type ALTER COLUMN id DROP DEFAULT;")];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -52,11 +52,11 @@ var AddColumnCodeIndicationCompanies1630028389953 = /** @class */ (function () {
             });
         });
     };
-    AddColumnCodeIndicationCompanies1630028389953.prototype.down = function (queryRunner) {
+    RemoveAutoIncrementUserstype1634778103372.prototype.down = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE \"companies\" DROP COLUMN code_indication")];
+                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE users_type ALTER COLUMN id SET DEFAULT NEXTVAL(\"users_type_id_seq\"::regclass);")];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -64,6 +64,6 @@ var AddColumnCodeIndicationCompanies1630028389953 = /** @class */ (function () {
             });
         });
     };
-    return AddColumnCodeIndicationCompanies1630028389953;
+    return RemoveAutoIncrementUserstype1634778103372;
 }());
-exports.AddColumnCodeIndicationCompanies1630028389953 = AddColumnCodeIndicationCompanies1630028389953;
+exports.RemoveAutoIncrementUserstype1634778103372 = RemoveAutoIncrementUserstype1634778103372;

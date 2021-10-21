@@ -36,15 +36,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AddColumnCodeIndicationCompanies1630028389953 = void 0;
-var AddColumnCodeIndicationCompanies1630028389953 = /** @class */ (function () {
-    function AddColumnCodeIndicationCompanies1630028389953() {
+exports.InsertDefaultUsersType1634780466999 = void 0;
+var InsertDefaultUsersType1634780466999 = /** @class */ (function () {
+    function InsertDefaultUsersType1634780466999() {
     }
-    AddColumnCodeIndicationCompanies1630028389953.prototype.up = function (queryRunner) {
+    InsertDefaultUsersType1634780466999.prototype.up = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE \"companies\" ADD COLUMN code_indication varchar NULL")];
+                    case 0: return [4 /*yield*/, queryRunner
+                            .manager
+                            .createQueryBuilder()
+                            .insert()
+                            .into('users_type')
+                            .values([
+                            { id: 1, name: 'ADMINISTRADOR', created_at: '2021-10-20 23:11:05.078429' },
+                            { id: 2, name: 'VENDEDOR', created_at: '2021-10-20 23:11:05.078429' },
+                            { id: 3, name: 'CLIENTE', created_at: '2021-10-20 23:11:05.078429' },
+                            { id: 4, name: 'EMPRESA', created_at: '2021-10-20 23:11:05.078429' },
+                            { id: 5, name: 'FRANQUIA', created_at: '2021-10-20 23:11:05.078429' }
+                        ])
+                            .execute()];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -52,18 +64,13 @@ var AddColumnCodeIndicationCompanies1630028389953 = /** @class */ (function () {
             });
         });
     };
-    AddColumnCodeIndicationCompanies1630028389953.prototype.down = function (queryRunner) {
+    InsertDefaultUsersType1634780466999.prototype.down = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE \"companies\" DROP COLUMN code_indication")];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                return [2 /*return*/];
             });
         });
     };
-    return AddColumnCodeIndicationCompanies1630028389953;
+    return InsertDefaultUsersType1634780466999;
 }());
-exports.AddColumnCodeIndicationCompanies1630028389953 = AddColumnCodeIndicationCompanies1630028389953;
+exports.InsertDefaultUsersType1634780466999 = InsertDefaultUsersType1634780466999;
