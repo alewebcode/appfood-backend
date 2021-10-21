@@ -195,8 +195,8 @@ exports.default = {
                             })];
                     case 1:
                         company = _a.sent();
-                        company.logo = "http://192.168.0.100:3333/uploads/" + company.logo;
-                        //company.logo = `https://appfood-backend.herokuapp.com/uploads/${company.logo}`
+                        //company.logo = `http://192.168.0.100:3333/uploads/${company.logo}`
+                        company.logo = "https://appfood-backend.herokuapp.com/uploads/" + company.logo;
                         return [2 /*return*/, response.json(company)];
                 }
             });

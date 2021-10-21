@@ -149,8 +149,8 @@ exports.default = {
                             })];
                     case 1:
                         product = _a.sent();
-                        product.image = "http://192.168.0.103:3333/uploads/" + product.image;
-                        //product.image = `https://appfood-backend.herokuapp.com/uploads/${product.image}`
+                        //product.image = `http://192.168.0.103:3333/uploads/${product.image}`
+                        product.image = "https://appfood-backend.herokuapp.com/uploads/" + product.image;
                         product.price = product.price
                             .replace('.', ',')
                             .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
