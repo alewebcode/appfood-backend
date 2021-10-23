@@ -9,6 +9,7 @@ import { Product } from '../models/Product';
 import { City } from '../models/City';
 import { Coupon } from '../models/Coupon';
 import { User } from '../models/User';
+import Mail from '../lib/Mail';
 
 export default {
 
@@ -50,8 +51,7 @@ export default {
           where:{user_referral:user_referral}
         })
 
-        const totalResults = await companiesRepository.count()
-
+        const totalResults = companies.length
         const result = {
           totalResults,
           companies
@@ -92,12 +92,16 @@ export default {
 
     const userRepository = getRepository(User)
 
+    const user_exists = await userRepository.findOne({email})
+
+    if(user_exists){
+      return response.status(401).json({error :"User already exists"})
+    }
+
     const password = crypto.randomBytes(4).toString('hex');
     const password_hash = await bcrypt.hash(password,8);
 
-    
     const findUser = await userRepository.findOne(decoded.id);
-
     const referral_code = crypto.randomBytes(3).toString('hex');
 
     const userData = {
@@ -105,7 +109,7 @@ export default {
       email,
       password:password_hash,
       user_type:4,
-      referral_code//findUser.referral_code
+      referral_code//findUser.referral_code,
     } as any
 
     const newUser = userRepository.create(userData);//CRIAÇÃO DE NOVO USUÁRIO A PARTIR DO CADASTRO DO VENDEDOR
@@ -117,8 +121,6 @@ export default {
     const requestLogo = request.file as Express.Multer.File;
    
     const file = requestLogo?requestLogo.filename:'';
-
-    //const referral_code = crypto.randomBytes(3).toString('hex');
 
     const  data = {
       name,
@@ -146,6 +148,18 @@ export default {
     const company = companyRepository.create(data)
 
     await companyRepository.save(company)
+
+    const data_email = {...userData,password}
+    
+    await Mail.sendMail({
+          from:'teste <teste@teste.com.br>',
+          to:`< ${userData.email} >`,
+          subject:'Cadastro da sua empresa no Tem de tudo',
+          template: 'new_company',
+          context: { data_email }
+
+    });
+  
 
     return response.status(201).send();
   },
@@ -331,7 +345,8 @@ export default {
 
     return response.status(201).json(products)
 
-  }
+  },
+  
   
   
 } 

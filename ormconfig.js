@@ -1,6 +1,7 @@
 module.exports = {
   "type":"postgres",
   "url": process.env.DATABASE_URL,
+  
   "ssl": true,
   "extra": {
     "ssl": {
@@ -12,6 +13,7 @@ module.exports = {
   "username":"postgres",
   "password":"123456",
   "database":"cuponsfood",
+  
   
   "migrations":[
     "dist/database/migrations/*.js"

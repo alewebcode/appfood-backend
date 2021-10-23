@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
@@ -67,6 +78,7 @@ var Product_1 = require("../models/Product");
 var City_1 = require("../models/City");
 var Coupon_1 = require("../models/Coupon");
 var User_1 = require("../models/User");
+var Mail_1 = __importDefault(require("../lib/Mail"));
 exports.default = {
     index: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
@@ -106,9 +118,7 @@ exports.default = {
                             })];
                     case 5:
                         companies_2 = _b.sent();
-                        return [4 /*yield*/, companiesRepository_1.count()];
-                    case 6:
-                        totalResults = _b.sent();
+                        totalResults = companies_2.length;
                         result = {
                             totalResults: totalResults,
                             companies: companies_2
@@ -120,7 +130,7 @@ exports.default = {
     },
     create: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var usertoken, token, decoded, _a, name, trading_name, cnpj, state_registration, zip_code, street, number, complement, neighborhood, city, state, phone, email, delivery, pickup_in_place, company_indication, segment, userRepository, password, password_hash, findUser, referral_code, userData, newUser, user, companyRepository, requestLogo, file, data, company;
+            var usertoken, token, decoded, _a, name, trading_name, cnpj, state_registration, zip_code, street, number, complement, neighborhood, city, state, phone, email, delivery, pickup_in_place, company_indication, segment, userRepository, user_exists, password, password_hash, findUser, referral_code, userData, newUser, user, companyRepository, requestLogo, file, data, company, data_email;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -129,12 +139,18 @@ exports.default = {
                         decoded = jsonwebtoken_1.default.verify(token[1], 'secret');
                         _a = request.body, name = _a.name, trading_name = _a.trading_name, cnpj = _a.cnpj, state_registration = _a.state_registration, zip_code = _a.zip_code, street = _a.street, number = _a.number, complement = _a.complement, neighborhood = _a.neighborhood, city = _a.city, state = _a.state, phone = _a.phone, email = _a.email, delivery = _a.delivery, pickup_in_place = _a.pickup_in_place, company_indication = _a.company_indication, segment = _a.segment;
                         userRepository = typeorm_1.getRepository(User_1.User);
+                        return [4 /*yield*/, userRepository.findOne({ email: email })];
+                    case 1:
+                        user_exists = _b.sent();
+                        if (user_exists) {
+                            return [2 /*return*/, response.status(401).json({ error: "User already exists" })];
+                        }
                         password = crypto.randomBytes(4).toString('hex');
                         return [4 /*yield*/, bcrypt_1.default.hash(password, 8)];
-                    case 1:
+                    case 2:
                         password_hash = _b.sent();
                         return [4 /*yield*/, userRepository.findOne(decoded.id)];
-                    case 2:
+                    case 3:
                         findUser = _b.sent();
                         referral_code = crypto.randomBytes(3).toString('hex');
                         userData = {
@@ -142,11 +158,11 @@ exports.default = {
                             email: email,
                             password: password_hash,
                             user_type: 4,
-                            referral_code: referral_code //findUser.referral_code
+                            referral_code: referral_code //findUser.referral_code,
                         };
                         newUser = userRepository.create(userData);
                         return [4 /*yield*/, userRepository.save(newUser)];
-                    case 3:
+                    case 4:
                         user = _b.sent();
                         companyRepository = typeorm_1.getRepository(Company_1.Company);
                         requestLogo = request.file;
@@ -175,7 +191,17 @@ exports.default = {
                         };
                         company = companyRepository.create(data);
                         return [4 /*yield*/, companyRepository.save(company)];
-                    case 4:
+                    case 5:
+                        _b.sent();
+                        data_email = __assign(__assign({}, userData), { password: password });
+                        return [4 /*yield*/, Mail_1.default.sendMail({
+                                from: 'teste <teste@teste.com.br>',
+                                to: "< " + userData.email + " >",
+                                subject: 'Cadastro da sua empresa no Tem de tudo',
+                                template: 'new_company',
+                                context: { data_email: data_email }
+                            })];
+                    case 6:
                         _b.sent();
                         return [2 /*return*/, response.status(201).send()];
                 }
@@ -360,5 +386,5 @@ exports.default = {
                 }
             });
         });
-    }
+    },
 };
