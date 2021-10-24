@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
@@ -66,6 +77,7 @@ var Salesman_1 = require("../models/Salesman");
 var User_1 = require("../models/User");
 var Customer_1 = require("../models/Customer");
 var Order_1 = require("../models/Order");
+var Mail_1 = __importDefault(require("../lib/Mail"));
 exports.default = {
     index: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
@@ -117,7 +129,7 @@ exports.default = {
     },
     create: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var usertoken, token, decoded, userRepository, _a, name, birthdate, cpf, phone, email, zip_code, street, number, complement, neighborhood, city, state, password, password_hash, findUser, referral_code, userData, newUser, user, customerRepository, format_birthdate, data, customer;
+            var usertoken, token, decoded, userRepository, _a, name, birthdate, cpf, phone, email, zip_code, street, number, complement, neighborhood, city, state, password, password_hash, findUser, referral_code, userData, newUser, user, customerRepository, format_birthdate, data, customer, data_email;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -165,54 +177,19 @@ exports.default = {
                             user_referral: findUser.referral_code
                         };
                         customer = customerRepository.create(data);
-                        return [4 /*yield*/, customerRepository.save(customer)
-                            // if(decoded.user_type.id == 6){
-                            //   const companyUser = await userRepository.findOneOrFail(decoded.id,{
-                            //     relations:['company']
-                            //   });
-                            //   const newData = {
-                            //     ...data,
-                            //     user_referral:companyUser.company.referral_code
-                            //   }
-                            //   const customer = customerRepository.create(newData)
-                            //   await customerRepository.save(customer)
-                            // }else{
-                            //   const salesmanRepository = getRepository(Salesman)
-                            //   const salesmanUser = await salesmanRepository.find({
-                            //     where:{user:decoded.id}
-                            //   })
-                            //   const newData = {
-                            //     ...data,
-                            //     user_referral:salesmanUser[0]['referral_code']
-                            //   }
-                            //    const customer = customerRepository.create(newData)
-                            //   await customerRepository.save(customer)
-                            // }
-                        ];
+                        return [4 /*yield*/, customerRepository.save(customer)];
                     case 4:
                         _b.sent();
-                        // if(decoded.user_type.id == 6){
-                        //   const companyUser = await userRepository.findOneOrFail(decoded.id,{
-                        //     relations:['company']
-                        //   });
-                        //   const newData = {
-                        //     ...data,
-                        //     user_referral:companyUser.company.referral_code
-                        //   }
-                        //   const customer = customerRepository.create(newData)
-                        //   await customerRepository.save(customer)
-                        // }else{
-                        //   const salesmanRepository = getRepository(Salesman)
-                        //   const salesmanUser = await salesmanRepository.find({
-                        //     where:{user:decoded.id}
-                        //   })
-                        //   const newData = {
-                        //     ...data,
-                        //     user_referral:salesmanUser[0]['referral_code']
-                        //   }
-                        //    const customer = customerRepository.create(newData)
-                        //   await customerRepository.save(customer)
-                        // }
+                        data_email = __assign(__assign({}, userData), { password: password });
+                        return [4 /*yield*/, Mail_1.default.sendMail({
+                                from: 'teste <teste@teste.com.br>',
+                                to: "< " + userData.email + " >",
+                                subject: 'Seu cadastro no Tem de tudo',
+                                template: 'new_customer',
+                                context: { data_email: data_email }
+                            })];
+                    case 5:
+                        _b.sent();
                         return [2 /*return*/, response.status(201).send()];
                 }
             });

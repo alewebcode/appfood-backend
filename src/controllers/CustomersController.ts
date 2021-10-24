@@ -10,6 +10,7 @@ import { User } from '../models/User';
 import { Customer } from '../models/Customer';
 import { Order } from '../models/Order';
 import { OrderItem } from '../models/OrderItem';
+import Mail from '../lib/Mail';
 
 export default {
 
@@ -139,38 +140,17 @@ export default {
     const customer = customerRepository.create(data)
 
     await customerRepository.save(customer)
-    // if(decoded.user_type.id == 6){
-    //   const companyUser = await userRepository.findOneOrFail(decoded.id,{
-    //     relations:['company']
-    //   });
+    
+    const data_email = {...userData,password}
+    
+    await Mail.sendMail({
+          from:'teste <teste@teste.com.br>',
+          to:`< ${userData.email} >`,
+          subject:'Seu cadastro no Tem de tudo',
+          template: 'new_customer',
+          context: { data_email }
 
-    //   const newData = {
-    //     ...data,
-    //     user_referral:companyUser.company.referral_code
-    //   }
-
-    //   const customer = customerRepository.create(newData)
-
-    //   await customerRepository.save(customer)
-
-      
-
-    // }else{
-      
-    //   const salesmanRepository = getRepository(Salesman)
-    //   const salesmanUser = await salesmanRepository.find({
-    //     where:{user:decoded.id}
-    //   })
-
-    //   const newData = {
-    //     ...data,
-    //     user_referral:salesmanUser[0]['referral_code']
-    //   }
-
-    //    const customer = customerRepository.create(newData)
-
-    //   await customerRepository.save(customer)
-    // }
+    });
 
     return response.status(201).send();
 
