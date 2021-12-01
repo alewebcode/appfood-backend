@@ -298,13 +298,15 @@ export default {
     }
     else{
       
-      const slug = request.query.slug?request.query.slug:'';
-
+      const slug = request.query.slug !== 'undefined'?request.query.slug:'';
+      
       const cityRepository = getRepository(City)
 
       const city = await cityRepository.findOne({
         where:{slug:slug}
       })
+
+      console.log(city)
 
       const companies = await companiesRepository
       .createQueryBuilder("companies")
@@ -320,9 +322,9 @@ export default {
       .innerJoin("companies.segment","segment_id")
       .innerJoin("companies.products","product")
       .innerJoin(Coupon,"coupons","Product.id = coupons.product_id")
-      .where('companies.city = :city', { city: city.id })
+      //.where('companies.city = :city', { city: city.id })
+      .where(city? `companies.city = ${city.id}` : null)
       .andWhere('companies.id <> :id', { id: 1})
-      //.andWhere("coupons.active = true")
       .getRawMany();
 
       

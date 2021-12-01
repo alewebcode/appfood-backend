@@ -337,13 +337,14 @@ exports.default = {
                         companies = _a.sent();
                         return [2 /*return*/, response.json(companies)];
                     case 2:
-                        slug = request.query.slug ? request.query.slug : '';
+                        slug = request.query.slug !== 'undefined' ? request.query.slug : '';
                         cityRepository = typeorm_1.getRepository(City_1.City);
                         return [4 /*yield*/, cityRepository.findOne({
                                 where: { slug: slug }
                             })];
                     case 3:
                         city = _a.sent();
+                        console.log(city);
                         return [4 /*yield*/, companiesRepository
                                 .createQueryBuilder("companies")
                                 .select(["product.id",
@@ -358,9 +359,9 @@ exports.default = {
                                 .innerJoin("companies.segment", "segment_id")
                                 .innerJoin("companies.products", "product")
                                 .innerJoin(Coupon_1.Coupon, "coupons", "Product.id = coupons.product_id")
-                                .where('companies.city = :city', { city: city.id })
+                                //.where('companies.city = :city', { city: city.id })
+                                .where(city ? "companies.city = " + city.id : null)
                                 .andWhere('companies.id <> :id', { id: 1 })
-                                //.andWhere("coupons.active = true")
                                 .getRawMany()];
                     case 4:
                         companies = _a.sent();
