@@ -151,14 +151,14 @@ export default {
 
     const data_email = {...userData,password}
     
-    await Mail.sendMail({
+    /*await Mail.sendMail({
           from:'teste <teste@teste.com.br>',
           to:`< ${userData.email} >`,
           subject:'Cadastro da sua empresa no Tem de tudo',
           template: 'new_company',
           context: { data_email }
 
-    });
+    });*/
   
 
     return response.status(201).send();
