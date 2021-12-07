@@ -7,7 +7,7 @@ module.exports = {
       "rejectUnauthorized": false
     }
   },
-  "outDir": "./lib",
+  "outDir": "lib/*.js",
   "port":5432,
   "host":"localhost",
   "username":"postgres",
