@@ -18,7 +18,8 @@ module.exports = {
     //"./src/database/migrations/*.ts"
   ],
   "entities":[
-    "dist/models/*.js"
+    "dist/models/*.js",
+    "dist/views/emails"
   ],
   "cli":{
     "migrationsDir":"./src/database/migrations"
