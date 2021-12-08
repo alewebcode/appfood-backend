@@ -6,7 +6,6 @@ import 'dotenv/config';
 import routes from './routes'
 import './database'
 
-//dotenv.config();
 
 const app = express()
 
