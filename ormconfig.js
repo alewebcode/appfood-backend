@@ -7,7 +7,6 @@ module.exports = {
       "rejectUnauthorized": false
     }
   },
-  "outDir": "./dist",
   "port":5432,
   "host":"localhost",
   "username":"postgres",
@@ -17,9 +16,6 @@ module.exports = {
   "migrations":[
     "dist/database/migrations/*.js"
     //"./src/database/migrations/*.ts"
-  ],
-  "include": [
-    "dist/lib/*.js"
   ],
   "entities":[
     "dist/models/*.js"
