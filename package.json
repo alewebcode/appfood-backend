@@ -4,8 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/server.js",
+    "clean": "rimraf dist/",
+    "copy-files": "copyfiles -u 1 src/**/*.hbs dist",
+    "build": "yarn clean && tsc && yarn copy-files",
     "dev": "ts-node-dev --transpile-only --ignore-watch node_modules --respawn src/server.ts",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli"
   },

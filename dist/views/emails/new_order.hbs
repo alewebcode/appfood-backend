@@ -1,0 +1,18 @@
+<strong>Olá</strong>
+<p>Um novo pedido foi realizado.Seguem os dados</p>
+
+<p>
+  Pedido: 
+  {{#each data.items}}
+  <p> {{this.product_name}}  - Cupom :{{this.coupon_code}}</p><br/>
+
+  {{/each}}
+
+  Cliente: {{data.customer.name}}
+  Telefone:99999999
+
+  
+</p>
+{{!-- <p><strong>Endereço de entrega:</strong> {{ recipient_address }}</p> --}}
+
+
