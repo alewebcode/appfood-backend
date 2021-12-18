@@ -12,14 +12,15 @@ module.exports = {
   "username":"postgres",
   "password":"123456",
   "database":"cuponsfood",
-  
   "migrations":[
     "dist/database/migrations/*.js"
     //"./src/database/migrations/*.ts"
   ],
   "entities":[
-    "dist/models/*.js",
-    "./src/views/emails"
+    "dist/database/models/*.js",
+    "dist/services/*.js",
+    "dist/utils/*.js"
+    //"./src/models/*.ts",
   ],
   "cli":{
     "migrationsDir":"./src/database/migrations"

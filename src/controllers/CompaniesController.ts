@@ -10,6 +10,7 @@ import { City } from '../models/City';
 import { Coupon } from '../models/Coupon';
 import { User } from '../models/User';
 import Mail from '../lib/Mail';
+import UploadImageService from '../services/UploadImageService';
 
 export default {
 
@@ -120,7 +121,14 @@ export default {
 
     const requestLogo = request.file as Express.Multer.File;
    
+    const uploadImage = UploadImageService
+    
     const file = requestLogo?requestLogo.filename:'';
+    
+    if(requestLogo){
+     await uploadImage.execute(requestLogo)
+    }
+    
 
     const  data = {
       name,
@@ -173,7 +181,8 @@ export default {
       relations:['segment']
     });
     //company.logo = `http://192.168.0.100:3333/uploads/${company.logo}`
-    company.logo = `https://appfood-backend.herokuapp.com/uploads/${company.logo}`
+    //company.logo = `https://appfood-backend.herokuapp.com/uploads/${company.logo}`
+    company.logo = `https://images-tdt.s3.amazonaws.com/${company.logo}`
 
 
     return response.json(company);

@@ -79,6 +79,7 @@ var City_1 = require("../models/City");
 var Coupon_1 = require("../models/Coupon");
 var User_1 = require("../models/User");
 var Mail_1 = __importDefault(require("../lib/Mail"));
+var UploadImageService_1 = __importDefault(require("../services/UploadImageService"));
 exports.default = {
     index: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
@@ -130,7 +131,7 @@ exports.default = {
     },
     create: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var usertoken, token, decoded, _a, name, trading_name, cnpj, state_registration, zip_code, street, number, complement, neighborhood, city, state, phone, email, delivery, pickup_in_place, company_indication, segment, userRepository, user_exists, password, password_hash, findUser, referral_code, userData, newUser, user, companyRepository, requestLogo, file, data, company, data_email;
+            var usertoken, token, decoded, _a, name, trading_name, cnpj, state_registration, zip_code, street, number, complement, neighborhood, city, state, phone, email, delivery, pickup_in_place, company_indication, segment, userRepository, user_exists, password, password_hash, findUser, referral_code, userData, newUser, user, companyRepository, requestLogo, uploadImage, file, data, company, data_email;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -166,7 +167,14 @@ exports.default = {
                         user = _b.sent();
                         companyRepository = typeorm_1.getRepository(Company_1.Company);
                         requestLogo = request.file;
+                        uploadImage = UploadImageService_1.default;
                         file = requestLogo ? requestLogo.filename : '';
+                        if (!requestLogo) return [3 /*break*/, 6];
+                        return [4 /*yield*/, uploadImage.execute(requestLogo)];
+                    case 5:
+                        _b.sent();
+                        _b.label = 6;
+                    case 6:
                         data = {
                             name: name,
                             trading_name: trading_name,
@@ -191,7 +199,7 @@ exports.default = {
                         };
                         company = companyRepository.create(data);
                         return [4 /*yield*/, companyRepository.save(company)];
-                    case 5:
+                    case 7:
                         _b.sent();
                         data_email = __assign(__assign({}, userData), { password: password });
                         return [4 /*yield*/, Mail_1.default.sendMail({
@@ -201,7 +209,7 @@ exports.default = {
                                 template: 'new_company',
                                 context: { data_email: data_email }
                             })];
-                    case 6:
+                    case 8:
                         _b.sent();
                         return [2 /*return*/, response.status(201).send()];
                 }
@@ -222,7 +230,8 @@ exports.default = {
                     case 1:
                         company = _a.sent();
                         //company.logo = `http://192.168.0.100:3333/uploads/${company.logo}`
-                        company.logo = "https://appfood-backend.herokuapp.com/uploads/" + company.logo;
+                        //company.logo = `https://appfood-backend.herokuapp.com/uploads/${company.logo}`
+                        company.logo = "https://images-tdt.s3.amazonaws.com/" + company.logo;
                         return [2 /*return*/, response.json(company)];
                 }
             });

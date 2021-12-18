@@ -181,9 +181,11 @@ import Mail from '../lib/Mail';
   }, 
   async authenticate(request:Request,response:Response){
     try{
+     
       const {email,password} = request.body
+     
       const userRepository = getRepository(User);
-
+     
       const user = await userRepository.findOne({email},{relations:['user_type']})
 
       if(!user){
@@ -230,6 +232,7 @@ import Mail from '../lib/Mail';
       });
       
     }catch(err){
+      
       
       return response.status(401).json({error: "User authentication failed"});
     }
