@@ -17,7 +17,7 @@ module.exports = {
     //"./src/database/migrations/*.ts"
   ],
   "entities":[
-    "dist/database/models/*.js",
+    "dist/models/*.js",
     "dist/services/*.js",
     "dist/utils/*.js"
     //"./src/models/*.ts",
