@@ -3,6 +3,7 @@ import { getRepository } from 'typeorm';
 import { Company } from '../models/Company';
 
 import { Product } from '../models/Product';
+import UploadImageService from '../services/UploadImageService';
 
 export default {
 
@@ -95,9 +96,14 @@ export default {
     const productRepository = getRepository(Product)
 
     const requestImage = request.file as Express.Multer.File;
-   
-    const file = requestImage?requestImage.filename:''
     
+    const uploadImage = UploadImageService
+
+    const file = requestImage?requestImage.filename:''
+
+    if(requestImage){
+     await uploadImage.execute(requestImage)
+    }
 
     const data = {
       name,

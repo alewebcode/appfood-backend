@@ -35,10 +35,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
 var Company_1 = require("../models/Company");
 var Product_1 = require("../models/Product");
+var UploadImageService_1 = __importDefault(require("../services/UploadImageService"));
 exports.default = {
     index: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
@@ -97,7 +101,7 @@ exports.default = {
     },
     create: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, name, description, price, category, user, companyRepository, company, format_price, productRepository, requestImage, file, data, product;
+            var _a, name, description, price, category, user, companyRepository, company, format_price, productRepository, requestImage, uploadImage, file, data, product;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -115,7 +119,14 @@ exports.default = {
                             .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
                         productRepository = typeorm_1.getRepository(Product_1.Product);
                         requestImage = request.file;
+                        uploadImage = UploadImageService_1.default;
                         file = requestImage ? requestImage.filename : '';
+                        if (!requestImage) return [3 /*break*/, 3];
+                        return [4 /*yield*/, uploadImage.execute(requestImage)];
+                    case 2:
+                        _b.sent();
+                        _b.label = 3;
+                    case 3:
                         data = {
                             name: name,
                             description: description,
@@ -126,7 +137,7 @@ exports.default = {
                         };
                         product = productRepository.create(data);
                         return [4 /*yield*/, productRepository.save(product)];
-                    case 2:
+                    case 4:
                         _b.sent();
                         return [2 /*return*/, response.status(201).send()];
                 }
