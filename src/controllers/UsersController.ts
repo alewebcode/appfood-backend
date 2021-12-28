@@ -85,6 +85,7 @@ import Mail from '../lib/Mail';
     }
 
     //const password_hash = await bcrypt.hash(password,8);
+    
 
     const  data = { 
       name,

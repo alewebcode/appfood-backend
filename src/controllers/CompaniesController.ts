@@ -100,7 +100,7 @@ export default {
     }
 
     const password = crypto.randomBytes(4).toString('hex');
-    const password_hash = await bcrypt.hash(password,8);
+    //const password_hash = await bcrypt.hash(password,8);
 
     const findUser = await userRepository.findOne(decoded.id);
     const referral_code = crypto.randomBytes(3).toString('hex');
@@ -108,7 +108,7 @@ export default {
     const userData = {
       name,
       email,
-      password:password_hash,
+      password,
       user_type:4,
       referral_code//findUser.referral_code,
     } as any

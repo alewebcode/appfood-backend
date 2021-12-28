@@ -72,7 +72,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
 var crypto = __importStar(require("crypto"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-var bcrypt_1 = __importDefault(require("bcrypt"));
 var Company_1 = require("../models/Company");
 var Product_1 = require("../models/Product");
 var City_1 = require("../models/City");
@@ -131,7 +130,7 @@ exports.default = {
     },
     create: function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var usertoken, token, decoded, _a, name, trading_name, cnpj, state_registration, zip_code, street, number, complement, neighborhood, city, state, phone, email, delivery, pickup_in_place, company_indication, segment, userRepository, user_exists, password, password_hash, findUser, referral_code, userData, newUser, user, companyRepository, requestLogo, uploadImage, file, data, company, data_email;
+            var usertoken, token, decoded, _a, name, trading_name, cnpj, state_registration, zip_code, street, number, complement, neighborhood, city, state, phone, email, delivery, pickup_in_place, company_indication, segment, userRepository, user_exists, password, findUser, referral_code, userData, newUser, user, companyRepository, requestLogo, uploadImage, file, data, company, data_email;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -147,34 +146,31 @@ exports.default = {
                             return [2 /*return*/, response.status(401).json({ error: "User already exists" })];
                         }
                         password = crypto.randomBytes(4).toString('hex');
-                        return [4 /*yield*/, bcrypt_1.default.hash(password, 8)];
-                    case 2:
-                        password_hash = _b.sent();
                         return [4 /*yield*/, userRepository.findOne(decoded.id)];
-                    case 3:
+                    case 2:
                         findUser = _b.sent();
                         referral_code = crypto.randomBytes(3).toString('hex');
                         userData = {
                             name: name,
                             email: email,
-                            password: password_hash,
+                            password: password,
                             user_type: 4,
                             referral_code: referral_code //findUser.referral_code,
                         };
                         newUser = userRepository.create(userData);
                         return [4 /*yield*/, userRepository.save(newUser)];
-                    case 4:
+                    case 3:
                         user = _b.sent();
                         companyRepository = typeorm_1.getRepository(Company_1.Company);
                         requestLogo = request.file;
                         uploadImage = UploadImageService_1.default;
                         file = requestLogo ? requestLogo.filename : '';
-                        if (!requestLogo) return [3 /*break*/, 6];
+                        if (!requestLogo) return [3 /*break*/, 5];
                         return [4 /*yield*/, uploadImage.execute(requestLogo)];
-                    case 5:
+                    case 4:
                         _b.sent();
-                        _b.label = 6;
-                    case 6:
+                        _b.label = 5;
+                    case 5:
                         data = {
                             name: name,
                             trading_name: trading_name,
@@ -199,7 +195,7 @@ exports.default = {
                         };
                         company = companyRepository.create(data);
                         return [4 /*yield*/, companyRepository.save(company)];
-                    case 7:
+                    case 6:
                         _b.sent();
                         data_email = __assign(__assign({}, userData), { password: password });
                         return [4 /*yield*/, Mail_1.default.sendMail({
@@ -209,7 +205,7 @@ exports.default = {
                                 template: 'new_company',
                                 context: { data_email: data_email }
                             })];
-                    case 8:
+                    case 7:
                         _b.sent();
                         return [2 /*return*/, response.status(201).send()];
                 }

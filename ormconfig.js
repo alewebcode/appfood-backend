@@ -14,12 +14,14 @@ module.exports = {
   "database":"cuponsfood",
   "migrations":[
     "dist/database/migrations/*.js"
+    
     //"./src/database/migrations/*.ts"
   ],
   "entities":[
     "dist/models/*.js",
     "dist/services/*.js",
     "dist/utils/*.js"
+    
     //"./src/models/*.ts",
   ],
   "cli":{
