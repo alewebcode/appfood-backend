@@ -111,9 +111,7 @@ exports.default = {
                         addedDate = date_fns_1.addHours(dateNow, 72);
                         expirate_date = date_fns_1.format(addedDate, 'Y-MM-dd HH:mm');
                         _a = request.body, description = _a.description, amount = _a.amount, coupon_code = _a.coupon_code, product = _a.product;
-                        format_amount = amount
-                            .replace(',', '.')
-                            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+                        format_amount = amount / 100;
                         data = {
                             description: description,
                             amount: format_amount,
@@ -161,9 +159,7 @@ exports.default = {
                     case 1:
                         coupon = _b.sent();
                         _a = request.body, description = _a.description, amount = _a.amount, coupon_code = _a.coupon_code, product = _a.product;
-                        format_amount = amount
-                            .replace(',', '.')
-                            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+                        format_amount = amount / 100;
                         data = {
                             description: description,
                             amount: format_amount,

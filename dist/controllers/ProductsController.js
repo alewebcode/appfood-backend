@@ -114,9 +114,7 @@ exports.default = {
                             })];
                     case 1:
                         company = _b.sent();
-                        format_price = price
-                            .replace(',', '.')
-                            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+                        format_price = price / 100;
                         productRepository = typeorm_1.getRepository(Product_1.Product);
                         requestImage = request.file;
                         uploadImage = UploadImageService_1.default;
@@ -184,9 +182,7 @@ exports.default = {
                         _a = request.body, name = _a.name, description = _a.description, price = _a.price, category = _a.category, company = _a.company;
                         requestImage = request.file;
                         file = requestImage ? requestImage.filename : product.image;
-                        format_price = price
-                            .replace(',', '.')
-                            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+                        format_price = price / 100;
                         data = {
                             name: name,
                             description: description,

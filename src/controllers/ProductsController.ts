@@ -89,9 +89,9 @@ export default {
     });
 
     
-    const format_price = price
-    .replace(',', '.')
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+    const format_price = price / 100
+    // .replace(',', '.')
+    // .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
   
     const productRepository = getRepository(Product)
 
@@ -165,9 +165,9 @@ export default {
    
     const file = requestImage?requestImage.filename:product.image
 
-    const format_price = price
-    .replace(',', '.')
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+    const format_price = price /100
+    
+    //format_price
 
     const  data = {
       name,
@@ -175,7 +175,7 @@ export default {
       price:format_price,
       category,
       image:file
-    }
+    }as any
 
 
     await productRepository.update(product,data)

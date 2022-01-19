@@ -121,7 +121,7 @@ exports.default = {
                             name: name,
                             email: email,
                             password: password_hash,
-                            id_user_type: 2
+                            user_type: 2
                         };
                         newUser = userRepository.create(userData);
                         return [4 /*yield*/, userRepository.save(newUser)];
@@ -143,7 +143,7 @@ exports.default = {
                             neighborhood: neighborhood,
                             city: city,
                             state: state,
-                            user: user.id,
+                            user: user,
                             referral_code: referral_code
                         };
                         salesman = salesmanRepository.create(data);

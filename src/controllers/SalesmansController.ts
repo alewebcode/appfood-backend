@@ -77,8 +77,8 @@ export default {
       name,
       email,
       password:password_hash,
-      id_user_type:2
-    }
+      user_type:2
+    } as any
 
     const newUser = userRepository.create(userData);//CRIAÇÃO DE NOVO USUÁRIO A PARTIR DO CADASTRO DO VENDEDOR
     
@@ -105,7 +105,7 @@ export default {
       neighborhood,
       city,
       state,
-      user:user.id,
+      user:user,
       referral_code
     }as any
 

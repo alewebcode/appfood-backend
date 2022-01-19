@@ -63,7 +63,6 @@ export default {
       //.andWhere("coupons.active = true")
       .getRawMany();
 
-      
       return response.json(products);
       
      

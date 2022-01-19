@@ -143,7 +143,7 @@ exports.default = {
                     case 1:
                         user_exists = _b.sent();
                         if (user_exists) {
-                            return [2 /*return*/, response.status(401).json({ error: "User already exists" })];
+                            return [2 /*return*/, response.status(400).json({ error: "Email de usuário já existe!" })];
                         }
                         password = crypto.randomBytes(4).toString('hex');
                         return [4 /*yield*/, userRepository.findOne(decoded.id)];

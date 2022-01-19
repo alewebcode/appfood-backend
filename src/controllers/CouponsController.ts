@@ -93,9 +93,7 @@ export default {
     
     } = request.body
 
-    const format_amount = amount
-    .replace(',', '.')
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+    const format_amount = amount /100
     
     
     const  data = {
@@ -104,7 +102,8 @@ export default {
       expiration_date:expirate_date,
       coupon_code,
       product
-    }
+    }as any 
+
     const couponRepository = getRepository(Coupon)
 
     const coupon = couponRepository.create(data)
@@ -141,9 +140,7 @@ export default {
     
     } = request.body
 
-    const format_amount = amount
-    .replace(',', '.')
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+    const format_amount = amount /100
     
     
     const  data = {
@@ -152,7 +149,7 @@ export default {
       expiration_date:coupon.expiration_date,
       coupon_code,
       product
-    }
+    }as any
 
 
     await couponRepository.update(coupon,data)

@@ -96,7 +96,7 @@ export default {
     const user_exists = await userRepository.findOne({email})
 
     if(user_exists){
-      return response.status(401).json({error :"User already exists"})
+      return response.status(400).json({error :"Email de usuário já existe!"})
     }
 
     const password = crypto.randomBytes(4).toString('hex');
